@@ -12,7 +12,7 @@ public class VNOI_CF_LIQ {
         for (int idx = 0; idx < len; idx++) {
             inp[idx] = in.nextInt();
         }
-        NDArray<Long> f = new NDArray<>(len, Long.class);
+        NDArray<Long> f = NDArray.longArray(len);
         for (int idx = 0; idx < len; idx++) {
             f.setL(idx, 1);
             for (int prev = 0; prev < idx; prev++) {

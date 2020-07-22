@@ -23,24 +23,36 @@ public class Main {
         OutputStream outputStream = System.out;
         FastScanner in = new FastScanner(inputStream);
         FastWriter out = new FastWriter(outputStream);
-        VNOI_CF_NKTICK solver = new VNOI_CF_NKTICK();
+        VNOI_CF_QBMAX solver = new VNOI_CF_QBMAX();
         solver.solve(1, in, out);
         out.close();
     }
 
-    static class VNOI_CF_NKTICK {
+    static class VNOI_CF_QBMAX {
         public void solve(int testNumber, FastScanner in, FastWriter out) throws IOException {
-            int len = in.nextLineAsInt();
-            NDArray<Integer> timeTaken = in.nextLineAsIntArray();
-            NDArray<Integer> timeCostForTwo = in.nextLineAsIntArray();
-            NDArray<Integer> f = new NDArray<>(len, Integer.class);
-            f.setI(0, timeTaken.getI(0));
-            for (int i = 1; i < len; i++) {
-                f.setI(i, Math.min(
-                        f.getI(i - 1) + timeTaken.getI(i),
-                        (i >= 2 ? f.getI(i - 2) : 0) + timeCostForTwo.getI(i - 1)));
+            NDShape size = in.nextLineAsShape();
+            NDArray<Integer> matrix = in.nextLinesAs2DIntArray(size);
+
+            int result = Integer.MIN_VALUE;
+            for (int col = 1; col < size.dim(1); col++) {
+                for (int row = 0; row < size.dim(0); row++) {
+                    int best = matrix.getI(row, col - 1);
+                    if (row > 0) {
+                        best = Math.max(best, matrix.getI(row - 1, col - 1));
+                    }
+                    if (row < size.dim(0) - 1) {
+                        best = Math.max(best, matrix.getI(row + 1, col - 1));
+                    }
+                    int newBest = best + matrix.getI(row, col);
+                    matrix.setI(row, col, newBest);
+
+                    if (col == size.dim(1) - 1) {
+                        result = Math.max(result, matrix.getI(row, col));
+                    }
+                }
             }
-            out.write(f.getI(len - 1));
+
+            out.write(result);
         }
 
     }
@@ -52,16 +64,28 @@ public class Main {
             this.bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
         }
 
-        public int nextLineAsInt() throws IOException {
-            return Integer.parseInt(bufferedReader.readLine().trim());
+        private String[] readTokens() throws IOException {
+            return bufferedReader.readLine().trim().split("\\s+");
         }
 
-        public NDArray<Integer> nextLineAsIntArray() throws IOException {
-            String line = bufferedReader.readLine();
-            String[] lineS = line.split(" ");
-            NDArray<Integer> result = new NDArray<>(lineS.length, Integer.class);
-            for (int i = 0; i < lineS.length; i++) {
-                result.setI(i, Integer.parseInt(lineS[i]));
+        public NDShape nextLineAsShape() throws IOException {
+            String[] tokens = readTokens();
+            int[] dims = new int[tokens.length];
+            for (int i = 0; i < tokens.length; i++) {
+                dims[i] = Integer.parseInt(tokens[i]);
+            }
+            return new NDShape(dims);
+        }
+
+        public NDArray<Integer> nextLinesAs2DIntArray(NDShape shape) throws IOException {
+            assert (shape.getDimension() == 2);
+            NDArray<Integer> result = NDArray.intArray((int) shape.size());
+            result.reshape(shape);
+            for (int row = 0; row < shape.dim(0); row++) {
+                String[] tokens = readTokens();
+                for (int col = 0; col < tokens.length; col++) {
+                    result.setI(row, col, Integer.parseInt(tokens[col]));
+                }
             }
             return result;
         }
@@ -76,7 +100,7 @@ public class Main {
         private final Class<T> clz;
         private NDShape shape;
 
-        public NDArray(int capacity, Class<T> clz) {
+        private NDArray(int capacity, Class<T> clz) {
             this.clz = clz;
             this.capacity = capacity;
             if (clz == Double.class) {
@@ -97,14 +121,25 @@ public class Main {
             this.shape = new NDShape(capacity);
         }
 
-        public int getI(int i0) {
-            assert (shape.getDimension() == 1);
-            return intBuffer[i0];
+        public static NDArray<Integer> intArray(int capacity) {
+            return new NDArray<>(capacity, Integer.class);
         }
 
-        public void setI(int i0, int val) {
-            assert (shape.getDimension() == 1);
-            intBuffer[i0] = val;
+        public void reshape(NDShape shape) {
+            if (shape.size() > capacity) {
+                throw new RuntimeException("Capacity is not enough for size " + shape.size());
+            }
+            this.shape = shape;
+        }
+
+        public int getI(int i0, int i1) {
+            assert (shape.getDimension() == 2);
+            return intBuffer[shape.d2(i0, i1)];
+        }
+
+        public void setI(int i0, int i1, int val) {
+            assert (shape.getDimension() == 2);
+            intBuffer[shape.d2(i0, i1)] = val;
         }
 
         public String toString() {
@@ -164,6 +199,19 @@ public class Main {
 
         public int getDimension() {
             return dims.length;
+        }
+
+        public int dim(int index) {
+            return dims[index];
+        }
+
+        public long size() {
+            return size;
+        }
+
+        public int d2(int i0, int i1) {
+            assert (dims.length == 2);
+            return i0 * dims[1] + i1;
         }
 
         public String toString() {

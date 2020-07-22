@@ -30,7 +30,7 @@ public class NDShape {
 
     public int d2(int i0, int i1) {
         assert(dims.length == 2);
-        return i0 * dims[0] + i1;
+        return i0 * dims[1] + i1;
     }
 
     @Override
