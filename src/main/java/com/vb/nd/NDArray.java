@@ -10,7 +10,7 @@ public class NDArray<T extends Number> {
     private final Class<T> clz;
     private NDShape shape;
 
-    public NDArray(int capacity, Class<T> clz) {
+    private NDArray(int capacity, Class<T> clz) {
         this.clz = clz;
         this.capacity = capacity;
         if (clz == Double.class) {
@@ -29,6 +29,18 @@ public class NDArray<T extends Number> {
             throw new RuntimeException("Unsupported number types");
         }
         this.shape = new NDShape(capacity);
+    }
+
+    public static NDArray<Integer> intArray(int capacity) {
+        return new NDArray<>(capacity, Integer.class);
+    }
+
+    public static NDArray<Double> doubleArray(int capacity) {
+        return new NDArray<>(capacity, Double.class);
+    }
+
+    public static NDArray<Long> longArray(int capacity) {
+        return new NDArray<>(capacity, Long.class);
     }
 
     public void reshape(NDShape shape) {

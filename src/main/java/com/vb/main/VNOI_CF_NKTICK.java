@@ -11,7 +11,7 @@ public class VNOI_CF_NKTICK {
         int len = in.nextLineAsInt();
         NDArray<Integer> timeTaken = in.nextLineAsIntArray();
         NDArray<Integer> timeCostForTwo = in.nextLineAsIntArray();
-        NDArray<Integer> f = new NDArray<>(len, Integer.class);
+        NDArray<Integer> f = NDArray.intArray(len);
         f.setI(0, timeTaken.getI(0));
         for (int i = 1; i < len; i++) {
             f.setI(i, Math.min(
