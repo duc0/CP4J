@@ -16,7 +16,7 @@ public class NDShape {
         this.size = sz;
     }
 
-    public int getDimension() {
+    public int rank() {
         return dims.length;
     }
 

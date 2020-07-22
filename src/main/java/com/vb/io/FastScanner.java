@@ -1,6 +1,6 @@
 package com.vb.io;
 
-import com.vb.nd.NDArray;
+import com.vb.nd.IntNDArray;
 import com.vb.nd.NDShape;
 
 import java.io.BufferedReader;
@@ -32,23 +32,23 @@ public class FastScanner {
         return new NDShape(dims);
     }
 
-    public NDArray<Integer> nextLineAsIntArray() throws IOException {
+    public IntNDArray nextLineAsIntArray() throws IOException {
         String[] tokens = readTokens();
-        NDArray<Integer> result = NDArray.intArray(tokens.length);
+        IntNDArray result = new IntNDArray(tokens.length);
         for (int i = 0; i < tokens.length; i++) {
-            result.setI(i, Integer.parseInt(tokens[i]));
+            result.set(i, Integer.parseInt(tokens[i]));
         }
         return result;
     }
 
-    public NDArray<Integer> nextLinesAs2DIntArray(NDShape shape) throws IOException {
-        assert(shape.getDimension() == 2);
-        NDArray<Integer> result = NDArray.intArray((int) shape.size());
+    public IntNDArray nextLinesAs2DIntArray(NDShape shape) throws IOException {
+        assert(shape.rank() == 2);
+        IntNDArray result = new IntNDArray((int) shape.size());
         result.reshape(shape);
         for (int row = 0; row < shape.dim(0); row++) {
             String[] tokens = readTokens();
             for (int col = 0; col < tokens.length; col++) {
-                result.setI(row, col, Integer.parseInt(tokens[col]));
+                result.set(row, col, Integer.parseInt(tokens[col]));
             }
         }
         return result;

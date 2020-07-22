@@ -1,6 +1,6 @@
 package com.vb.main;
 
-import com.vb.nd.NDArray;
+import com.vb.nd.IntNDArray;
 
 import java.io.PrintWriter;
 import java.util.Scanner;
@@ -12,15 +12,15 @@ public class VNOI_CF_LIQ {
         for (int idx = 0; idx < len; idx++) {
             inp[idx] = in.nextInt();
         }
-        NDArray<Long> f = NDArray.longArray(len);
+        IntNDArray f = new IntNDArray(len);
         for (int idx = 0; idx < len; idx++) {
-            f.setL(idx, 1);
+            f.set(idx, 1);
             for (int prev = 0; prev < idx; prev++) {
                 if (inp[prev] < inp[idx]) {
-                    f.setIfMoreL(idx, f.getL(prev) + 1);
+                    f.setIfMore(idx, f.get(prev) + 1);
                 }
             }
         }
-        out.print(f.maxL());
+        out.print(f.max());
     }
 }
