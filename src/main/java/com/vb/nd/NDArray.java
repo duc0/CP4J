@@ -2,7 +2,7 @@ package com.vb.nd;
 
 import java.util.Arrays;
 
-class NDArray<T extends Number> {
+public class NDArray<T extends Number> {
     protected final int[] intBuffer;
     private final long[] longBuffer;
     private final double[] doubleBuffer;
