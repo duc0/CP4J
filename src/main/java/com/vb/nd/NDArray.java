@@ -1,6 +1,9 @@
 package com.vb.nd;
 
+import java.util.Arrays;
+
 public class NDArray<T extends Number> {
+    private final int[] intBuffer;
     private final long[] longBuffer;
     private final double[] doubleBuffer;
     private final int capacity;
@@ -13,9 +16,15 @@ public class NDArray<T extends Number> {
         if (clz == Double.class) {
             this.doubleBuffer = new double[capacity];
             this.longBuffer = null;
+            this.intBuffer = null;
         } else if (clz == Long.class) {
             this.longBuffer = new long[capacity];
             this.doubleBuffer = null;
+            this.intBuffer = null;
+        } else if (clz == Integer.class) {
+            this.intBuffer = new int[capacity];
+            this.doubleBuffer = null;
+            this.longBuffer = null;
         } else {
             throw new RuntimeException("Unsupported number types");
         }
@@ -28,6 +37,7 @@ public class NDArray<T extends Number> {
         }
         this.shape = shape;
     }
+
 
     public long getL(int i0) {
         assert(shape.getDimension() == 1);
@@ -46,7 +56,7 @@ public class NDArray<T extends Number> {
 
     public void setL(int i0, int i1, long val) {
         assert(shape.getDimension() == 2);
-        longBuffer[i0 * shape.dim(0) + i1] = val;
+        longBuffer[shape.d2(i0, i1)] = val;
     }
 
     public long maxL() {
@@ -64,5 +74,59 @@ public class NDArray<T extends Number> {
         if (val > longBuffer[i0]) {
             longBuffer[i0] = val;
         }
+    }
+    public int getI(int i0) {
+        assert(shape.getDimension() == 1);
+        return intBuffer[i0];
+    }
+
+    public int getI(int i0, int i1) {
+        assert(shape.getDimension() == 2);
+        return intBuffer[shape.d2(i0, i1)];
+    }
+
+    public void setI(int i0, int val) {
+        assert(shape.getDimension() == 1);
+        intBuffer[i0] = val;
+    }
+
+    public void setI(int i0, int i1, int val) {
+        assert(shape.getDimension() == 2);
+        intBuffer[shape.d2(i0, i1)] = val;
+    }
+
+    public int maxI() {
+        int result = intBuffer[0];
+        for (int x : intBuffer) {
+            if (x > result) {
+                result = x;
+            }
+        }
+        return result;
+    }
+
+    public void setIfMoreI(int i0, int val) {
+        assert(shape.getDimension() == 1);
+        if (val > intBuffer[i0]) {
+            intBuffer[i0] = val;
+        }
+    }
+
+    @Override
+    public String toString() {
+        String array = "";
+        if (clz == Double.class) {
+            array = Arrays.toString(doubleBuffer);
+        } else if (clz == Long.class) {
+            array = Arrays.toString(longBuffer);
+        } else if (clz == Integer.class) {
+            array = Arrays.toString(intBuffer);
+        }
+        return "NDArray{" +
+                "buffer=" + array +
+                ", capacity=" + capacity +
+                ", clz=" + clz +
+                ", shape=" + shape +
+                '}';
     }
 }
