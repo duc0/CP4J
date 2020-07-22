@@ -1,0 +1,39 @@
+{
+  "name" : "VNOI_CF_NKCITY",
+  "testType" : "SINGLE",
+  "input" : {
+    "type" : "STANDARD",
+    "fileName" : "input.txt"
+  },
+  "output" : {
+    "type" : "STANDARD",
+    "fileName" : "output.txt"
+  },
+  "tests" : [ {
+    "input" : "5 7\n1 2 2\n1 5 1\n2 5 1\n1 4 3\n1 3 2\n5 3 2\n3 4 4",
+    "output" : "3",
+    "index" : 0,
+    "active" : true
+  }, {
+    "input" : "10 30\n5 3 764\n2 8 411\n4 10 622\n8 9 429\n6 3 906\n10 3 86\n4 6 686\n9 6 424\n6 1 870\n5 6 857\n10 5 500\n1 5 543\n8 7 149\n5 4 684\n5 2 113\n9 5 809\n3 2 182\n7 4 173\n2 4 708\n4 8 327\n9 1 980\n7 1 60\n6 7 138\n2 7 781\n7 10 489\n4 9 626\n1 3 482\n8 1 560\n2 1 952\n10 2 777",
+    "output" : "",
+    "index" : 1,
+    "active" : true
+  } ],
+  "location" : "src/main/java/com/vb/main",
+  "vmArgs" : "-Xmx256m -Xss64m",
+  "mainClass" : "Main",
+  "taskClass" : "com.vb.main.VNOI_CF_NKCITY",
+  "checkerClass" : "net.egork.chelper.checkers.TokenChecker",
+  "checkerParameters" : "",
+  "testClasses" : [ ],
+  "date" : "2020.07.22",
+  "contestName" : "VNOI_CF",
+  "truncate" : true,
+  "inputClass" : "com.vb.io.FastScanner",
+  "outputClass" : "com.vb.io.FastWriter",
+  "includeLocale" : false,
+  "failOnOverflow" : false,
+  "interactive" : false,
+  "interactor" : "net.egork.chelper.tester.Interactor"
+}

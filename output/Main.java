@@ -4,8 +4,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Arrays;
 import java.io.BufferedWriter;
+import java.util.function.Predicate;
 import java.io.IOException;
+import java.util.HashMap;
 import java.io.InputStreamReader;
+import java.util.Map;
 import java.io.Writer;
 import java.io.OutputStreamWriter;
 import java.io.BufferedReader;
@@ -18,36 +21,56 @@ import java.io.InputStream;
  * @author duc
  */
 public class Main {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         InputStream inputStream = System.in;
         OutputStream outputStream = System.out;
         FastScanner in = new FastScanner(inputStream);
         FastWriter out = new FastWriter(outputStream);
-        VNOI_CF_QBMAX solver = new VNOI_CF_QBMAX();
+        VNOI_CF_NKCITY solver = new VNOI_CF_NKCITY();
         solver.solve(1, in, out);
         out.close();
     }
 
-    static class VNOI_CF_QBMAX {
+    static class VNOI_CF_NKCITY {
         public void solve(int testNumber, FastScanner in, FastWriter out) throws IOException {
-            NDShape size = in.nextLineAsShape();
-            IntNDArray matrix = in.nextLinesAs2DIntArray(size);
-
-            for (int col = 1; col < size.dim(1); col++) {
-                for (int row = 0; row < size.dim(0); row++) {
-                    int best = matrix.get(row, col - 1);
-                    if (row > 0) {
-                        best = Math.max(best, matrix.get(row - 1, col - 1));
-                    }
-                    if (row < size.dim(0) - 1) {
-                        best = Math.max(best, matrix.get(row + 1, col - 1));
-                    }
-                    int newBest = best + matrix.get(row, col);
-                    matrix.set(row, col, newBest);
-                }
+            IntNDArray size = in.nextLineAsIntArray();
+            int n = size.get(0);
+            int m = size.get(1);
+            Graph graph = new GraphAdjList(n, m * 2, true);
+            IntGraphWeight cost = new IntGraphWeight(graph);
+            int minWeight = Integer.MAX_VALUE;
+            int maxWeight = Integer.MIN_VALUE;
+            for (int i = 0; i < m; i++) {
+                IntNDArray row = in.nextLineAsIntArray();
+                int u = row.get(0);
+                int v = row.get(1);
+                int t = row.get(2);
+                graph.addEdge(u - 1, v - 1);
+                cost.setWeight(u - 1, v - 1, t);
+                minWeight = Math.min(minWeight, t);
+                maxWeight = Math.max(maxWeight, t);
             }
 
-            out.write(matrix.max(NDSliceRanges.col2D(-1)));
+            out.write(BinarySearch.findMinSatisfy(minWeight, maxWeight, w -> new ConnectedComponentsDetector(graph, (u, v) -> cost.getWeight(u, v) <= w).getNumComponents() == 1));
+        }
+
+    }
+
+    static class BinarySearch {
+        public static Long findMinSatisfy(long min, long max, Predicate<Long> predicate) {
+            long left = min;
+            long right = max;
+            Long result = null;
+            while (left <= right) {
+                long mid = left + (right - left) / 2;
+                if (predicate.test(mid)) {
+                    result = mid;
+                    right = mid - 1;
+                } else {
+                    left = mid + 1;
+                }
+            }
+            return result;
         }
 
     }
@@ -81,48 +104,14 @@ public class Main {
             this.shape = new NDShape(capacity);
         }
 
-        public void reshape(NDShape shape) {
-            if (shape.size() > capacity) {
-                throw new RuntimeException("Capacity is not enough for size " + shape.size());
-            }
-            this.shape = shape;
-        }
-
         int getI(int i0) {
             assert (shape.rank() == 1);
             return intBuffer[i0];
         }
 
-        int getI(int i0, int i1) {
-            assert (shape.rank() == 2);
-            return intBuffer[shape.d2(i0, i1)];
-        }
-
-        int getI(NDIndex index) {
-            if (index.rank() == 1) {
-                return getI(index.index(0));
-            } else if (index.rank() == 2) {
-                return getI(index.index(0), index.index(1));
-            } else {
-                throw new RuntimeException("Unimplemented");
-            }
-        }
-
-        void setI(int i0, int i1, int val) {
-            assert (shape.rank() == 2);
-            intBuffer[shape.d2(i0, i1)] = val;
-        }
-
-        int maxI(NDSliceRanges ndSliceRanges) {
-            NDIndex index = NDIndex.startIndex(shape, ndSliceRanges);
-            int result = getI(index);
-            do {
-                int value = getI(index);
-                if (value > result) {
-                    result = value;
-                }
-            } while (index.next(shape, ndSliceRanges));
-            return result;
+        void setI(int i0, int val) {
+            assert (shape.rank() == 1);
+            intBuffer[i0] = val;
         }
 
         public String toString() {
@@ -144,57 +133,6 @@ public class Main {
 
     }
 
-    static class NDSliceRanges {
-        private final int[] sliceStart;
-        private final int[] sliceEnd;
-
-        public static NDSliceRanges singleDimension(int rank, int dimension, int start, int end) {
-            int[] sliceStart = new int[rank];
-            int[] sliceEnd = new int[rank];
-            sliceStart[dimension] = start;
-            sliceEnd[dimension] = end;
-            return new NDSliceRanges(sliceStart, sliceEnd);
-        }
-
-        public static NDSliceRanges col2D(int start) {
-            return singleDimension(2, 1, start, start + 1);
-        }
-
-        private NDSliceRanges(int[] sliceStart, int[] sliceEnd) {
-            assert (sliceStart.length == sliceEnd.length);
-            this.sliceStart = sliceStart;
-            this.sliceEnd = sliceEnd;
-        }
-
-        public int rank() {
-            return sliceStart.length;
-        }
-
-        public int getSliceStart(NDShape shape, int i) {
-            int result = sliceStart[i];
-            if (result < 0) {
-                result = shape.dim(i) + result;
-            }
-            return result;
-        }
-
-        public int getSliceEnd(NDShape shape, int i) {
-            int result = sliceEnd[i];
-            if (result <= 0) {
-                result = shape.dim(i) + result;
-            }
-            return result;
-        }
-
-        public String toString() {
-            return "NDSliceRanges{" +
-                    "sliceStart=" + Arrays.toString(sliceStart) +
-                    ", sliceEnd=" + Arrays.toString(sliceEnd) +
-                    '}';
-        }
-
-    }
-
     static class FastWriter {
         private final BufferedWriter bufferedWriter;
 
@@ -211,52 +149,163 @@ public class Main {
             bufferedWriter.close();
         }
 
-        public void write(int token) throws IOException {
+        public void write(long token) throws IOException {
             bufferedWriter.write(String.valueOf(token));
             bufferedWriter.flush();
         }
 
     }
 
-    static class NDIndex {
-        private final int[] indexes;
+    static interface EdgePredicate {
+        boolean test(int u, int v);
 
-        public NDIndex(int... indexes) {
-            this.indexes = indexes;
-        }
+    }
 
-        public int rank() {
-            return indexes.length;
-        }
+    static class GraphAdjList implements Graph {
+        private final int numVertices;
+        private final int edgeCapacity;
+        private int numEdges;
+        private final int[] start;
+        private final int[] end;
+        private final int[] lastEdgeIndexWithStart;
+        private final int[] prevEdgeIndexSameStart;
+        private final int[] lastEdgeIndexWithEnd;
+        private final int[] prevEdgeIndexSameEnd;
+        private final int[] degree;
+        private final Map<Integer, Integer> edgeIndexes = new HashMap<>();
+        private final boolean bidirected;
 
-        public int index(int index) {
-            return indexes[index];
-        }
+        public GraphAdjList(int numVertices, int edgeCapacity, boolean bidirected) {
+            this.numVertices = numVertices;
+            this.edgeCapacity = edgeCapacity;
+            this.start = new int[edgeCapacity];
+            this.end = new int[edgeCapacity];
 
-        public static NDIndex startIndex(NDShape ndShape, NDSliceRanges ndSliceRanges) {
-            int[] indexes = new int[ndSliceRanges.rank()];
-            for (int i = 0; i < ndSliceRanges.rank(); i++) {
-                indexes[i] = ndSliceRanges.getSliceStart(ndShape, i);
+            this.lastEdgeIndexWithStart = new int[numVertices];
+            this.lastEdgeIndexWithEnd = new int[numVertices];
+            this.prevEdgeIndexSameStart = new int[edgeCapacity];
+            this.prevEdgeIndexSameEnd = new int[edgeCapacity];
+            this.degree = new int[numVertices];
+            this.bidirected = bidirected;
+            for (int u = 0; u < numVertices; u++) {
+                lastEdgeIndexWithStart[u] = -1;
+                lastEdgeIndexWithEnd[u] = -1;
+                degree[u] = 0;
+                prevEdgeIndexSameStart[u] = -1;
+                prevEdgeIndexSameEnd[u] = -1;
             }
-            return new NDIndex(indexes);
         }
 
-        public boolean next(NDShape ndShape, NDSliceRanges ndSliceRanges) {
-            int i = ndSliceRanges.rank() - 1;
-            for (; i >= 0; i--) {
-                if (indexes[i] < ndSliceRanges.getSliceEnd(ndShape, i) - 1) {
-                    indexes[i]++;
-                    break;
+        public boolean isBidirected() {
+            return bidirected;
+        }
+
+        public int numVertices() {
+            return numVertices;
+        }
+
+        public int edgesCapacity() {
+            return edgeCapacity;
+        }
+
+        public int[] next(int vertex) {
+            int[] result = new int[degree[vertex]];
+            int idx = lastEdgeIndexWithStart[vertex];
+            int resultIdx = 0;
+            while (idx >= 0) {
+                result[resultIdx] = end[idx];
+                idx = prevEdgeIndexSameStart[idx];
+                resultIdx++;
+            }
+            if (isBidirected()) {
+                idx = lastEdgeIndexWithEnd[vertex];
+                while (idx >= 0) {
+                    result[resultIdx] = start[idx];
+                    idx = prevEdgeIndexSameEnd[idx];
+                    resultIdx++;
                 }
-                indexes[i] = ndSliceRanges.getSliceStart(ndShape, i);
             }
-            return i >= 0;
+            return result;
         }
 
-        public String toString() {
-            return "NDIndex{" +
-                    "indexes=" + Arrays.toString(indexes) +
-                    '}';
+        private int getMatrixIndex(int u, int v) {
+            return u * numVertices + v;
+        }
+
+        private int addEdgeRaw(int u, int v) {
+            start[numEdges] = u;
+            end[numEdges] = v;
+            prevEdgeIndexSameStart[numEdges] = lastEdgeIndexWithStart[u];
+            lastEdgeIndexWithStart[u] = numEdges;
+            prevEdgeIndexSameEnd[numEdges] = lastEdgeIndexWithEnd[v];
+            lastEdgeIndexWithEnd[v] = numEdges;
+            degree[u]++;
+            int index = numEdges;
+            edgeIndexes.put(getMatrixIndex(u, v), numEdges);
+            if (isBidirected()) {
+                degree[v]++;
+                edgeIndexes.put(getMatrixIndex(v, u), numEdges);
+            }
+            numEdges++;
+            return index;
+        }
+
+        public int addEdge(int u, int v) {
+            if (isBidirected()) {
+                if (u < v) {
+                    return addEdgeRaw(u, v);
+                } else {
+                    return addEdgeRaw(v, u);
+                }
+            } else {
+                return addEdgeRaw(u, v);
+            }
+        }
+
+        public int getEdgeIndex(int u, int v) {
+            Integer res = edgeIndexes.get(getMatrixIndex(u, v));
+            if (res == null) {
+                throw new RuntimeException("Unable to find indexes for edge " + u + ", " + v);
+            }
+            return res;
+        }
+
+    }
+
+    static class ConnectedComponentsDetector {
+        private final Graph graph;
+        private final int[] component;
+        private final EdgePredicate edgePredicate;
+        private int numComponents;
+
+        public ConnectedComponentsDetector(Graph graph, EdgePredicate edgePredicate) {
+            this.graph = graph;
+            this.edgePredicate = edgePredicate;
+            assert (graph.isBidirected());
+            component = new int[graph.numVertices()];
+            run();
+        }
+
+        private void dfs(int u) {
+            component[u] = numComponents;
+            for (int v : graph.next(u)) {
+                if (edgePredicate.test(u, v) && component[v] == 0) {
+                    dfs(v);
+                }
+            }
+        }
+
+        private void run() {
+            for (int u = 0; u < graph.numVertices(); u++) {
+                if (component[u] == 0) {
+                    numComponents++;
+                    dfs(u);
+                }
+            }
+        }
+
+        public int getNumComponents() {
+            return numComponents;
         }
 
     }
@@ -272,24 +321,11 @@ public class Main {
             return bufferedReader.readLine().trim().split("\\s+");
         }
 
-        public NDShape nextLineAsShape() throws IOException {
+        public IntNDArray nextLineAsIntArray() throws IOException {
             String[] tokens = readTokens();
-            int[] dims = new int[tokens.length];
+            IntNDArray result = new IntNDArray(tokens.length);
             for (int i = 0; i < tokens.length; i++) {
-                dims[i] = Integer.parseInt(tokens[i]);
-            }
-            return new NDShape(dims);
-        }
-
-        public IntNDArray nextLinesAs2DIntArray(NDShape shape) throws IOException {
-            assert (shape.rank() == 2);
-            IntNDArray result = new IntNDArray((int) shape.size());
-            result.reshape(shape);
-            for (int row = 0; row < shape.dim(0); row++) {
-                String[] tokens = readTokens();
-                for (int col = 0; col < tokens.length; col++) {
-                    result.set(row, col, Integer.parseInt(tokens[col]));
-                }
+                result.set(i, Integer.parseInt(tokens[i]));
             }
             return result;
         }
@@ -301,16 +337,31 @@ public class Main {
             super(capacity, Integer.class);
         }
 
-        public int get(int i0, int i1) {
-            return getI(i0, i1);
+        public int get(int i0) {
+            return getI(i0);
         }
 
-        public void set(int i0, int i1, int val) {
-            setI(i0, i1, val);
+        public void set(int i0, int val) {
+            setI(i0, val);
         }
 
-        public int max(NDSliceRanges ndSliceRanges) {
-            return maxI(ndSliceRanges);
+    }
+
+    static final class IntGraphWeight {
+        private final Graph graph;
+        private final IntNDArray weight;
+
+        public IntGraphWeight(Graph graph) {
+            this.graph = graph;
+            weight = new IntNDArray(graph.edgesCapacity());
+        }
+
+        public void setWeight(int u, int v, int w) {
+            weight.set(graph.getEdgeIndex(u, v), w);
+        }
+
+        public int getWeight(int u, int v) {
+            return weight.get(graph.getEdgeIndex(u, v));
         }
 
     }
@@ -332,25 +383,27 @@ public class Main {
             return dims.length;
         }
 
-        public int dim(int index) {
-            return dims[index];
-        }
-
-        public long size() {
-            return size;
-        }
-
-        public int d2(int i0, int i1) {
-            assert (dims.length == 2);
-            return i0 * dims[1] + i1;
-        }
-
         public String toString() {
             return "NDShape{" +
                     "dims=" + Arrays.toString(dims) +
                     ", size=" + size +
                     '}';
         }
+
+    }
+
+    static interface Graph {
+        boolean isBidirected();
+
+        int numVertices();
+
+        int edgesCapacity();
+
+        int[] next(int vertex);
+
+        int addEdge(int u, int v);
+
+        int getEdgeIndex(int u, int v);
 
     }
 }
