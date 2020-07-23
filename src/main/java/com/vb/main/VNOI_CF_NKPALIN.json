@@ -1,0 +1,34 @@
+{
+  "name" : "VNOI_CF_NKPALIN",
+  "testType" : "SINGLE",
+  "input" : {
+    "type" : "STANDARD",
+    "fileName" : "input.txt"
+  },
+  "output" : {
+    "type" : "STANDARD",
+    "fileName" : "output.txt"
+  },
+  "tests" : [ {
+    "input" : "lmevxeyzl",
+    "output" : "level",
+    "index" : 0,
+    "active" : true
+  } ],
+  "location" : "src/main/java/com/vb/main",
+  "vmArgs" : "-Xmx256m -Xss64m",
+  "mainClass" : "Main",
+  "taskClass" : "com.vb.main.VNOI_CF_NKPALIN",
+  "checkerClass" : "net.egork.chelper.checkers.TokenChecker",
+  "checkerParameters" : "",
+  "testClasses" : [ ],
+  "date" : "2020.07.23",
+  "contestName" : "VNOI_CF",
+  "truncate" : true,
+  "inputClass" : "com.vb.io.FastScanner",
+  "outputClass" : "com.vb.io.FastWriter",
+  "includeLocale" : false,
+  "failOnOverflow" : false,
+  "interactive" : false,
+  "interactor" : "net.egork.chelper.tester.Interactor"
+}
