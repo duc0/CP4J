@@ -19,6 +19,10 @@ public class FastScanner {
         return Integer.parseInt(bufferedReader.readLine().trim());
     }
 
+    public String nextLineAsString() throws IOException {
+        return bufferedReader.readLine();
+    }
+
     private String[] readTokens() throws IOException {
         return bufferedReader.readLine().trim().split("\\s+");
     }
