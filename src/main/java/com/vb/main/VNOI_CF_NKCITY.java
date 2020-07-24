@@ -1,5 +1,6 @@
 package com.vb.main;
 
+import com.vb.algorithm.AlgorithmRunner;
 import com.vb.graph.ConnectedComponentsDetector;
 import com.vb.graph.Graph;
 import com.vb.graph.GraphAdjList;
@@ -26,11 +27,13 @@ public class VNOI_CF_NKCITY {
             int v = row.get(1);
             int t = row.get(2);
             graph.addEdge(u - 1, v - 1);
-            cost.setWeight(u - 1 ,v - 1, t);
+            cost.setWeight(u - 1, v - 1, t);
             minWeight = Math.min(minWeight, t);
             maxWeight = Math.max(maxWeight, t);
         }
 
-        out.write(BinarySearch.findMinSatisfy(minWeight, maxWeight, w -> new ConnectedComponentsDetector(graph, (u, v) -> cost.getWeight(u, v) <= w).getNumComponents() == 1));
+        ConnectedComponentsDetector cc = new ConnectedComponentsDetector();
+        out.write(BinarySearch.findMinSatisfy(minWeight, maxWeight, w ->
+                AlgorithmRunner.runAlgorithm(cc, new ConnectedComponentsDetector.Input(graph, (u, v) -> cost.getWeight(u, v) <= w)).getResult().isConnected()));
     }
 }

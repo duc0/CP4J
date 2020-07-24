@@ -1,42 +1,60 @@
 package com.vb.graph;
 
-public class ConnectedComponentsDetector {
-    private final Graph graph;
-    private final int[] component;
-    private final EdgePredicate edgePredicate;
-    private int numComponents;
+import com.vb.algorithm.Algorithm;
 
-    public ConnectedComponentsDetector(Graph graph, EdgePredicate edgePredicate) {
-        this.graph = graph;
-        this.edgePredicate = edgePredicate;
-        assert(graph.isBidirected());
-        component = new int[graph.numVertices()];
-        run();
+public class ConnectedComponentsDetector implements Algorithm<ConnectedComponentsDetector.Input, ConnectedComponentsDetector.Output> {
+
+    public ConnectedComponentsDetector() {
     }
 
-    private void dfs(int u) {
-        component[u] = numComponents;
-        for (int v : graph.next(u)) {
-            if (edgePredicate.test(u, v) && component[v] == 0) {
-                dfs(v);
+    private void dfs(Input input, Output output, int u) {
+        output.component[u] = output.numComponents;
+        for (int v : input.graph.next(u)) {
+            if (input.edgePredicate.test(u, v) && output.component[v] == 0) {
+                dfs(input, output, v);
             }
         }
     }
 
-    private void run() {
-        for (int u = 0; u < graph.numVertices(); u++) {
-            if (component[u] == 0) {
-                numComponents++;
-                dfs(u);
+    @Override
+    public long getComplexity(Input input) {
+        return input.graph.numVertices() + input.graph.numEdges();
+    }
+
+    @Override
+    public Output run(Input input) {
+        assert(input.graph.isBidirected());
+        Output output = new Output();
+        output.component = new int[input.graph.numVertices()];
+        for (int u = 0; u < input.graph.numVertices(); u++) {
+            if (output.component[u] == 0) {
+                output.numComponents++;
+                dfs(input, output, u);
             }
+        }
+        return output;
+    }
+
+    public static final class Input {
+        final Graph graph;
+        final EdgePredicate edgePredicate;
+
+        public Input(Graph graph, EdgePredicate edgePredicate) {
+            this.graph = graph;
+            this.edgePredicate = edgePredicate;
         }
     }
 
-    public int getNumComponents() {
-        return numComponents;
-    }
+    public static final class Output {
+        private int[] component;
+        private int numComponents;
 
-    public boolean isConnected() {
-        return getNumComponents() == 1;
+        public int getNumComponents() {
+            return numComponents;
+        }
+
+        public boolean isConnected() {
+            return getNumComponents() == 1;
+        }
     }
 }

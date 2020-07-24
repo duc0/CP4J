@@ -1,2 +1,3 @@
-46 src/main/java/com/vb/main/VNOI_CF_NKPALIN.json
-0
+45 src/main/java/com/vb/main/VNOI_CF_NKCITY.json
+1
+1

@@ -4,8 +4,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Arrays;
 import java.io.BufferedWriter;
+import java.util.function.Predicate;
 import java.io.IOException;
+import java.util.HashMap;
 import java.io.InputStreamReader;
+import java.util.Map;
 import java.io.Writer;
 import java.io.OutputStreamWriter;
 import java.io.BufferedReader;
@@ -23,56 +26,154 @@ public class Main {
         OutputStream outputStream = System.out;
         FastScanner in = new FastScanner(inputStream);
         FastWriter out = new FastWriter(outputStream);
-        VNOI_CF_NKPALIN solver = new VNOI_CF_NKPALIN();
+        VNOI_CF_NKCITY solver = new VNOI_CF_NKCITY();
         solver.solve(1, in, out);
         out.close();
     }
 
-    static class VNOI_CF_NKPALIN {
-        String trace(String s, IntNDArray f, int l, int left) {
-            if (l <= 0) {
-                return "";
+    static class VNOI_CF_NKCITY {
+        public void solve(int testNumber, FastScanner in, FastWriter out) throws IOException {
+            IntNDArray size = in.nextLineAsIntArray();
+            int n = size.get(0);
+            int m = size.get(1);
+            Graph graph = new GraphAdjList(n, m * 2, true);
+            IntGraphWeight cost = new IntGraphWeight(graph);
+            int minWeight = Integer.MAX_VALUE;
+            int maxWeight = Integer.MIN_VALUE;
+            for (int i = 0; i < m; i++) {
+                IntNDArray row = in.nextLineAsIntArray();
+                int u = row.get(0);
+                int v = row.get(1);
+                int t = row.get(2);
+                graph.addEdge(u - 1, v - 1);
+                cost.setWeight(u - 1, v - 1, t);
+                minWeight = Math.min(minWeight, t);
+                maxWeight = Math.max(maxWeight, t);
             }
-            if (l == 1) {
-                return String.valueOf(s.charAt(left));
-            }
-            int right = l + left - 1;
-            if (s.charAt(left) == s.charAt(right)) {
-                return s.charAt(left) + trace(s, f, l - 2, left + 1) + s.charAt(right);
-            } else if (f.get(l, left) == f.get(l - 1, left)) {
-                return trace(s, f, l - 1, left);
-            } else {
-                return trace(s, f, l - 1, left + 1);
+
+            ConnectedComponentsDetector cc = new ConnectedComponentsDetector();
+            out.write(BinarySearch.findMinSatisfy(minWeight, maxWeight, w ->
+                    AlgorithmRunner.runAlgorithm(cc, new ConnectedComponentsDetector.Input(graph, (u, v) -> cost.getWeight(u, v) <= w)).getResult().isConnected()));
+        }
+
+    }
+
+    static interface EdgePredicate {
+        boolean test(int u, int v);
+
+    }
+
+    static class GraphAdjList implements Graph {
+        private final int numVertices;
+        private final int edgeCapacity;
+        private int numEdges;
+        private final int[] start;
+        private final int[] end;
+        private final int[] lastEdgeIndexWithStart;
+        private final int[] prevEdgeIndexSameStart;
+        private final int[] lastEdgeIndexWithEnd;
+        private final int[] prevEdgeIndexSameEnd;
+        private final int[] degree;
+        private final Map<Integer, Integer> edgeIndexes = new HashMap<>();
+        private final boolean bidirected;
+
+        public GraphAdjList(int numVertices, int edgeCapacity, boolean bidirected) {
+            this.numVertices = numVertices;
+            this.edgeCapacity = edgeCapacity;
+            this.start = new int[edgeCapacity];
+            this.end = new int[edgeCapacity];
+
+            this.lastEdgeIndexWithStart = new int[numVertices];
+            this.lastEdgeIndexWithEnd = new int[numVertices];
+            this.prevEdgeIndexSameStart = new int[edgeCapacity];
+            this.prevEdgeIndexSameEnd = new int[edgeCapacity];
+            this.degree = new int[numVertices];
+            this.bidirected = bidirected;
+            for (int u = 0; u < numVertices; u++) {
+                lastEdgeIndexWithStart[u] = -1;
+                lastEdgeIndexWithEnd[u] = -1;
+                degree[u] = 0;
+                prevEdgeIndexSameStart[u] = -1;
+                prevEdgeIndexSameEnd[u] = -1;
             }
         }
 
-        public void solve(int testNumber, FastScanner in, FastWriter out) throws IOException {
-            String s = in.nextLineAsString();
-            int n = s.length();
-            IntNDArray f = new IntNDArray((n + 1) * n);
-            f.reshape(new NDShape(n + 1, n));
-            for (int l = 1; l <= n; l++) {
-                for (int left = 0; left + l - 1 < n; left++) {
-                    int right = left + l - 1;
-                    int value;
-                    if (left == right) {
-                        value = 1;
-                    } else {
-                        if (s.charAt(left) == s.charAt(right)) {
-                            if (l == 1) {
-                                value = 2;
-                            } else {
-                                value = f.get(l - 2, left + 1) + 2;
-                            }
-                        } else {
-                            value = Math.max(f.get(l - 1, left), f.get(l - 1, left + 1));
-                        }
-                    }
-                    f.set(l, left, value);
+        public boolean isBidirected() {
+            return bidirected;
+        }
+
+        public int numVertices() {
+            return numVertices;
+        }
+
+        public int numEdges() {
+            return numEdges;
+        }
+
+        public int edgesCapacity() {
+            return edgeCapacity;
+        }
+
+        public int[] next(int vertex) {
+            int[] result = new int[degree[vertex]];
+            int idx = lastEdgeIndexWithStart[vertex];
+            int resultIdx = 0;
+            while (idx >= 0) {
+                result[resultIdx] = end[idx];
+                idx = prevEdgeIndexSameStart[idx];
+                resultIdx++;
+            }
+            if (isBidirected()) {
+                idx = lastEdgeIndexWithEnd[vertex];
+                while (idx >= 0) {
+                    result[resultIdx] = start[idx];
+                    idx = prevEdgeIndexSameEnd[idx];
+                    resultIdx++;
                 }
             }
-            String result = trace(s, f, n, 0);
-            out.write(result);
+            return result;
+        }
+
+        private int getMatrixIndex(int u, int v) {
+            return u * numVertices + v;
+        }
+
+        private int addEdgeRaw(int u, int v) {
+            start[numEdges] = u;
+            end[numEdges] = v;
+            prevEdgeIndexSameStart[numEdges] = lastEdgeIndexWithStart[u];
+            lastEdgeIndexWithStart[u] = numEdges;
+            prevEdgeIndexSameEnd[numEdges] = lastEdgeIndexWithEnd[v];
+            lastEdgeIndexWithEnd[v] = numEdges;
+            degree[u]++;
+            int index = numEdges;
+            edgeIndexes.put(getMatrixIndex(u, v), numEdges);
+            if (isBidirected()) {
+                degree[v]++;
+                edgeIndexes.put(getMatrixIndex(v, u), numEdges);
+            }
+            numEdges++;
+            return index;
+        }
+
+        public int addEdge(int u, int v) {
+            if (isBidirected()) {
+                if (u < v) {
+                    return addEdgeRaw(u, v);
+                } else {
+                    return addEdgeRaw(v, u);
+                }
+            } else {
+                return addEdgeRaw(u, v);
+            }
+        }
+
+        public int getEdgeIndex(int u, int v) {
+            Integer res = edgeIndexes.get(getMatrixIndex(u, v));
+            if (res == null) {
+                throw new RuntimeException("Unable to find indexes for edge " + u + ", " + v);
+            }
+            return res;
         }
 
     }
@@ -106,21 +207,14 @@ public class Main {
             this.shape = new NDShape(capacity);
         }
 
-        public void reshape(NDShape shape) {
-            if (shape.size() > capacity) {
-                throw new RuntimeException("Capacity is not enough for size " + shape.size());
-            }
-            this.shape = shape;
+        int getI(int i0) {
+            assert (shape.rank() == 1);
+            return intBuffer[i0];
         }
 
-        int getI(int i0, int i1) {
-            assert (shape.rank() == 2);
-            return intBuffer[shape.d2(i0, i1)];
-        }
-
-        void setI(int i0, int i1, int val) {
-            assert (shape.rank() == 2);
-            intBuffer[shape.d2(i0, i1)] = val;
+        void setI(int i0, int val) {
+            assert (shape.rank() == 1);
+            intBuffer[i0] = val;
         }
 
         public String toString() {
@@ -142,38 +236,28 @@ public class Main {
 
     }
 
-    static class FastScanner {
-        private final BufferedReader bufferedReader;
+    static interface Algorithm<I, O> {
+        long getComplexity(I input);
 
-        public FastScanner(InputStream inputStream) {
-            this.bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-        }
-
-        public String nextLineAsString() throws IOException {
-            return bufferedReader.readLine();
-        }
+        O run(I input);
 
     }
 
-    static class FastWriter {
-        private final BufferedWriter bufferedWriter;
+    static final class IntGraphWeight {
+        private final Graph graph;
+        private final IntNDArray weight;
 
-        public FastWriter(OutputStream outputStream) {
-            bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream));
+        public IntGraphWeight(Graph graph) {
+            this.graph = graph;
+            weight = new IntNDArray(graph.edgesCapacity());
         }
 
-        public FastWriter(Writer writer) {
-            bufferedWriter = new BufferedWriter(writer);
+        public void setWeight(int u, int v, int w) {
+            weight.set(graph.getEdgeIndex(u, v), w);
         }
 
-        public void close() throws IOException {
-            bufferedWriter.flush();
-            bufferedWriter.close();
-        }
-
-        public void write(String token) throws IOException {
-            bufferedWriter.write(token);
-            bufferedWriter.flush();
+        public int getWeight(int u, int v) {
+            return weight.get(graph.getEdgeIndex(u, v));
         }
 
     }
@@ -195,15 +279,6 @@ public class Main {
             return dims.length;
         }
 
-        public long size() {
-            return size;
-        }
-
-        public int d2(int i0, int i1) {
-            assert (dims.length == 2);
-            return i0 * dims[1] + i1;
-        }
-
         public String toString() {
             return "NDShape{" +
                     "dims=" + Arrays.toString(dims) +
@@ -213,17 +288,193 @@ public class Main {
 
     }
 
+    static class ConnectedComponentsDetector implements Algorithm<ConnectedComponentsDetector.Input, ConnectedComponentsDetector.Output> {
+        public ConnectedComponentsDetector() {
+        }
+
+        private void dfs(ConnectedComponentsDetector.Input input, ConnectedComponentsDetector.Output output, int u) {
+            output.component[u] = output.numComponents;
+            for (int v : input.graph.next(u)) {
+                if (input.edgePredicate.test(u, v) && output.component[v] == 0) {
+                    dfs(input, output, v);
+                }
+            }
+        }
+
+        public long getComplexity(ConnectedComponentsDetector.Input input) {
+            return input.graph.numVertices() + input.graph.numEdges();
+        }
+
+        public ConnectedComponentsDetector.Output run(ConnectedComponentsDetector.Input input) {
+            assert (input.graph.isBidirected());
+            ConnectedComponentsDetector.Output output = new ConnectedComponentsDetector.Output();
+            output.component = new int[input.graph.numVertices()];
+            for (int u = 0; u < input.graph.numVertices(); u++) {
+                if (output.component[u] == 0) {
+                    output.numComponents++;
+                    dfs(input, output, u);
+                }
+            }
+            return output;
+        }
+
+        public static final class Input {
+            final Graph graph;
+            final EdgePredicate edgePredicate;
+
+            public Input(Graph graph, EdgePredicate edgePredicate) {
+                this.graph = graph;
+                this.edgePredicate = edgePredicate;
+            }
+
+        }
+
+        public static final class Output {
+            private int[] component;
+            private int numComponents;
+
+            public int getNumComponents() {
+                return numComponents;
+            }
+
+            public boolean isConnected() {
+                return getNumComponents() == 1;
+            }
+
+        }
+
+    }
+
+    static class BinarySearch {
+        public static Long findMinSatisfy(long min, long max, Predicate<Long> predicate) {
+            long left = min;
+            long right = max;
+            Long result = null;
+            while (left <= right) {
+                long mid = left + (right - left) / 2;
+                if (predicate.test(mid)) {
+                    result = mid;
+                    right = mid - 1;
+                } else {
+                    left = mid + 1;
+                }
+            }
+            return result;
+        }
+
+    }
+
+    static class FastScanner {
+        private final BufferedReader bufferedReader;
+
+        public FastScanner(InputStream inputStream) {
+            this.bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+        }
+
+        private String[] readTokens() throws IOException {
+            return bufferedReader.readLine().trim().split("\\s+");
+        }
+
+        public IntNDArray nextLineAsIntArray() throws IOException {
+            String[] tokens = readTokens();
+            IntNDArray result = new IntNDArray(tokens.length);
+            for (int i = 0; i < tokens.length; i++) {
+                result.set(i, Integer.parseInt(tokens[i]));
+            }
+            return result;
+        }
+
+    }
+
+    static final class AlgorithmRunner {
+        private AlgorithmRunner() {
+        }
+
+        public static <I, O> AlgorithmRunner.AlgorithmResult<O> runAlgorithm(Algorithm<I, O> algorithm, I input) {
+            return runAlgorithm(algorithm, input, 1000000000);
+        }
+
+        public static <I, O> AlgorithmRunner.AlgorithmResult<O> runAlgorithm(Algorithm<I, O> algorithm, I input, long complexityLimit) {
+            long complexity = algorithm.getComplexity(input);
+            if (complexity > complexityLimit) {
+                throw new RuntimeException("This algorithm might be too slow!");
+            }
+            long startTime = System.currentTimeMillis();
+            O output = algorithm.run(input);
+            long elapsed = System.currentTimeMillis() - startTime;
+            return new AlgorithmRunner.AlgorithmResult<>(output, elapsed, complexity);
+        }
+
+        public static final class AlgorithmResult<O> {
+            final O result;
+            final long runTime;
+            final long complexity;
+
+            AlgorithmResult(O result, long runTime, long complexity) {
+                this.result = result;
+                this.runTime = runTime;
+                this.complexity = complexity;
+            }
+
+            public O getResult() {
+                return result;
+            }
+
+        }
+
+    }
+
     static class IntNDArray extends NDArray<Integer> {
         public IntNDArray(int capacity) {
             super(capacity, Integer.class);
         }
 
-        public int get(int i0, int i1) {
-            return getI(i0, i1);
+        public int get(int i0) {
+            return getI(i0);
         }
 
-        public void set(int i0, int i1, int val) {
-            setI(i0, i1, val);
+        public void set(int i0, int val) {
+            setI(i0, val);
+        }
+
+    }
+
+    static interface Graph {
+        boolean isBidirected();
+
+        int numVertices();
+
+        int numEdges();
+
+        int edgesCapacity();
+
+        int[] next(int vertex);
+
+        int addEdge(int u, int v);
+
+        int getEdgeIndex(int u, int v);
+
+    }
+
+    static class FastWriter {
+        private final BufferedWriter bufferedWriter;
+
+        public FastWriter(OutputStream outputStream) {
+            bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream));
+        }
+
+        public FastWriter(Writer writer) {
+            bufferedWriter = new BufferedWriter(writer);
+        }
+
+        public void close() throws IOException {
+            bufferedWriter.flush();
+            bufferedWriter.close();
+        }
+
+        public void write(long token) throws IOException {
+            bufferedWriter.write(String.valueOf(token));
+            bufferedWriter.flush();
         }
 
     }
