@@ -20,16 +20,20 @@ public class FastWriter {
 
     public void write(String token) throws IOException {
         bufferedWriter.write(token);
-        bufferedWriter.flush();
+        //bufferedWriter.flush();
     }
 
     public void write(int token) throws IOException {
         bufferedWriter.write(String.valueOf(token));
-        bufferedWriter.flush();
+        //bufferedWriter.flush();
     }
 
     public void write(long token) throws IOException {
         bufferedWriter.write(String.valueOf(token));
+        //bufferedWriter.flush();
+    }
+
+    public void flush() throws IOException {
         bufferedWriter.flush();
     }
 }
