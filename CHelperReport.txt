@@ -1,2 +1,2 @@
-45 src/main/java/com/vb/main/VNOI_CF_IOIBIN.json
+44 src/main/java/com/vb/main/VNOI_CF_QBMST.json
 0
