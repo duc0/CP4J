@@ -33,6 +33,14 @@ public class IntNDArray extends NDArray<Integer> {
         return maxI(ndSliceRanges);
     }
 
+    public int min() {
+        return minI();
+    }
+
+    public int min(NDSliceRanges ndSliceRanges) {
+        return minI(ndSliceRanges);
+    }
+
     public void setIfMore(int i0, int val) {
         setIfMoreI(i0, val);
     }

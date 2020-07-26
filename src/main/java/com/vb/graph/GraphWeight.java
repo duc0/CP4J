@@ -3,5 +3,7 @@ package com.vb.graph;
 public interface GraphWeight<T extends Number> {
     int[] getEdgesSortedByWeight();
 
-    T getWeight(int edgeId);
+    T getWeightBoxed(int u, int v);
+
+    T getWeightBoxed(int edgeId);
 }

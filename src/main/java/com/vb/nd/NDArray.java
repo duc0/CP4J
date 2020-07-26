@@ -2,7 +2,7 @@ package com.vb.nd;
 
 import java.util.Arrays;
 
-public class NDArray<T extends Number> {
+public abstract class NDArray<T extends Number> {
     protected final int[] intBuffer;
     private final long[] longBuffer;
     private final double[] doubleBuffer;
@@ -73,6 +73,8 @@ public class NDArray<T extends Number> {
 
     int getI(int i0, int i1) {
         assert(shape.rank() == 2);
+        assert(0 <= i0 && i0 < shape.dim(0)) : "i0 = " + i0;
+        assert(0 <= i1 && i1 < shape.dim(1)) : "i1 = " + i1;
         return intBuffer[shape.d2(i0, i1)];
     }
 
@@ -108,6 +110,22 @@ public class NDArray<T extends Number> {
           if (value > result) {
               result = value;
           }
+        } while (index.next(shape, ndSliceRanges));
+        return result;
+    }
+
+    int minI() {
+        return minI(NDSliceRanges.all(shape.rank()));
+    }
+
+    int minI(NDSliceRanges ndSliceRanges) {
+        NDIndex index = NDIndex.startIndex(shape, ndSliceRanges);
+        int result = getI(index);
+        do {
+            int value = getI(index);
+            if (value < result) {
+                result = value;
+            }
         } while (index.next(shape, ndSliceRanges));
         return result;
     }

@@ -11,7 +11,6 @@ import java.util.Map;
 import java.io.Writer;
 import java.io.OutputStreamWriter;
 import java.io.BufferedReader;
-import java.util.Comparator;
 import java.io.InputStream;
 
 /**
@@ -21,64 +20,86 @@ import java.io.InputStream;
  * @author duc
  */
 public class Main {
-    public static void main(String[] args) throws IOException  {
+    public static void main(String[] args) throws IOException {
         InputStream inputStream = System.in;
         OutputStream outputStream = System.out;
         FastScanner in = new FastScanner(inputStream);
         FastWriter out = new FastWriter(outputStream);
-        VNOI_CF_QBMST solver = new VNOI_CF_QBMST();
+        VNOI_CF_LEM3 solver = new VNOI_CF_LEM3();
         solver.solve(1, in, out);
         out.close();
     }
 
-    static class VNOI_CF_QBMST {
+    static class VNOI_CF_LEM3 {
         public void solve(int testNumber, FastScanner in, FastWriter out) throws IOException {
-            int[] firstLine = in.readTokensAsIntArray(2);
-            int nNodes = firstLine[0];
-            int nEdges = firstLine[1];
-            Graph g = new GraphAdjList(nNodes, nEdges, true);
+            int n = in.nextLineAsInt();
+            Graph g = new GraphAdjList(n, n * n, false);
             IntGraphWeight weight = new IntGraphWeight(g);
-            for (int i = 0; i < nEdges; i++) {
-                int[] line = in.readTokensAsIntArray(3);
-                int u = line[0] - 1;
-                int v = line[1] - 1;
-                g.addEdge(u, v);
-                weight.setWeight(u, v, line[2]);
+            for (int i = 0; i < n; i++) {
+                int[] row = in.readTokensAsIntArray(n);
+                for (int j = 0; j < n; j++) {
+                    if (i != j && row[j] > 0) {
+                        g.addEdge(i, j);
+                        weight.setWeight(i, j, row[j]);
+                    }
+                }
             }
-            KruskalAlgorithm<Integer> kruskal = new KruskalAlgorithm<>();
-            KruskalAlgorithm.Input<Integer> input = new KruskalAlgorithm.Input(g, weight);
-            out.write((int) AlgorithmRunner.runAlgorithm(kruskal, input).getResult().getMinimumWeight());
+            HamiltonPathFinder<Integer> hpf = new HamiltonPathFinder<>(Integer.class);
+            HamiltonPathFinder.Input<Integer> input = new HamiltonPathFinder.Input(g, weight);
+            out.write((int) AlgorithmRunner.runAlgorithm(hpf, input).getResult().getMinimumWeight());
+            out.flush();
             out.flush();
         }
 
     }
 
-    static class DisjointSet {
-        private final int size;
-        private final int[] parent;
+    static class NDSliceRanges {
+        private final int[] sliceStart;
+        private final int[] sliceEnd;
 
-        public DisjointSet(int size) {
-            this.size = size;
-            this.parent = new int[size];
-            for (int i = 0; i < size; i++) {
-                parent[i] = i;
+        public static NDSliceRanges singleDimension(int rank, int dimension, int start, int end) {
+            int[] sliceStart = new int[rank];
+            int[] sliceEnd = new int[rank];
+            sliceStart[dimension] = start;
+            sliceEnd[dimension] = end;
+            return new NDSliceRanges(sliceStart, sliceEnd);
+        }
+
+        public static NDSliceRanges col2D(int start) {
+            return singleDimension(2, 1, start, start + 1);
+        }
+
+        private NDSliceRanges(int[] sliceStart, int[] sliceEnd) {
+            assert (sliceStart.length == sliceEnd.length);
+            this.sliceStart = sliceStart;
+            this.sliceEnd = sliceEnd;
+        }
+
+        public int rank() {
+            return sliceStart.length;
+        }
+
+        public int getSliceStart(NDShape shape, int i) {
+            int result = sliceStart[i];
+            if (result < 0) {
+                result = shape.dim(i) + result;
             }
+            return result;
         }
 
-        private int getRoot(int u) {
-            if (parent[u] == u) {
-                return u;
-            } else {
-                return parent[u] = getRoot(parent[u]);
+        public int getSliceEnd(NDShape shape, int i) {
+            int result = sliceEnd[i];
+            if (result <= 0) {
+                result = shape.dim(i) + result;
             }
+            return result;
         }
 
-        public void merge(int u, int v) {
-            parent[getRoot(u)] = getRoot(v);
-        }
-
-        public boolean inSameSet(int u, int v) {
-            return getRoot(u) == getRoot(v);
+        public String toString() {
+            return "NDSliceRanges{" +
+                    "sliceStart=" + Arrays.toString(sliceStart) +
+                    ", sliceEnd=" + Arrays.toString(sliceEnd) +
+                    '}';
         }
 
     }
@@ -90,17 +111,73 @@ public class Main {
 
     }
 
-    static interface GraphWeight<T extends Number> {
-        int[] getEdgesSortedByWeight();
+    static class SmallBitSet {
+        public static int fullSet(int n) {
+            return (1 << n) - 1;
+        }
 
-        T getWeight(int edgeId);
+        public static boolean contains(int set, int i) {
+            return BitUtils.testBit(set, i);
+        }
+
+        public static int union(int set, int i) {
+            return BitUtils.setBit(set, i);
+        }
+
+        public static int singleElement(int i) {
+            return 1 << i;
+        }
+
+    }
+
+    static interface GraphWeight<T extends Number> {
+    }
+
+    static class NDIndex {
+        private final int[] indexes;
+
+        public NDIndex(int... indexes) {
+            this.indexes = indexes;
+        }
+
+        public int rank() {
+            return indexes.length;
+        }
+
+        public int index(int index) {
+            return indexes[index];
+        }
+
+        public static NDIndex startIndex(NDShape ndShape, NDSliceRanges ndSliceRanges) {
+            int[] indexes = new int[ndSliceRanges.rank()];
+            for (int i = 0; i < ndSliceRanges.rank(); i++) {
+                indexes[i] = ndSliceRanges.getSliceStart(ndShape, i);
+            }
+            return new NDIndex(indexes);
+        }
+
+        public boolean next(NDShape ndShape, NDSliceRanges ndSliceRanges) {
+            int i = ndSliceRanges.rank() - 1;
+            for (; i >= 0; i--) {
+                if (indexes[i] < ndSliceRanges.getSliceEnd(ndShape, i) - 1) {
+                    indexes[i]++;
+                    break;
+                }
+                indexes[i] = ndSliceRanges.getSliceStart(ndShape, i);
+            }
+            return i >= 0;
+        }
+
+        public String toString() {
+            return "NDIndex{" +
+                    "indexes=" + Arrays.toString(indexes) +
+                    '}';
+        }
 
     }
 
     static interface Graph {
         int numVertices();
-
-        int numEdges();
 
         int edgesCapacity();
 
@@ -108,9 +185,7 @@ public class Main {
 
         int getEdgeIndex(int u, int v);
 
-        int getEdgeStart(int edgeId);
-
-        int getEdgeEnd(int edgeId);
+        boolean hasEdge(int u, int v);
 
     }
 
@@ -155,10 +230,6 @@ public class Main {
 
         public int numVertices() {
             return numVertices;
-        }
-
-        public int numEdges() {
-            return numEdges;
         }
 
         public int edgesCapacity() {
@@ -207,54 +278,8 @@ public class Main {
             return res;
         }
 
-        public int getEdgeStart(int edgeId) {
-            return start[edgeId];
-        }
-
-        public int getEdgeEnd(int edgeId) {
-            return end[edgeId];
-        }
-
-    }
-
-    static class KruskalAlgorithm<T extends Number> implements Algorithm<KruskalAlgorithm.Input<T>, KruskalAlgorithm.Output> {
-        public long getComplexity(KruskalAlgorithm.Input<T> input) {
-            return (long) (input.graph.numEdges() * Math.log(input.graph.numVertices()));
-        }
-
-        public KruskalAlgorithm.Output run(KruskalAlgorithm.Input<T> input) {
-            DisjointSet dj = new DisjointSet(input.graph.numVertices());
-            int[] sortedEdges = input.weight.getEdgesSortedByWeight();
-            KruskalAlgorithm.Output output = new KruskalAlgorithm.Output();
-            for (int edgeId : sortedEdges) {
-                int u = input.graph.getEdgeStart(edgeId);
-                int v = input.graph.getEdgeEnd(edgeId);
-                if (!dj.inSameSet(u, v)) {
-                    dj.merge(u, v);
-                    output.minimumWeight = output.minimumWeight + input.weight.getWeight(edgeId).doubleValue();
-                }
-            }
-            return output;
-        }
-
-        public static final class Input<T extends Number> {
-            final Graph graph;
-            final GraphWeight<T> weight;
-
-            public Input(Graph graph, GraphWeight<T> weight) {
-                this.graph = graph;
-                this.weight = weight;
-            }
-
-        }
-
-        public static final class Output {
-            private double minimumWeight;
-
-            public double getMinimumWeight() {
-                return minimumWeight;
-            }
-
+        public boolean hasEdge(int u, int v) {
+            return edgeIndexes.containsKey(getMatrixIndex(u, v));
         }
 
     }
@@ -268,8 +293,20 @@ public class Main {
             return getI(i0);
         }
 
+        public int get(int i0, int i1) {
+            return getI(i0, i1);
+        }
+
         public void set(int i0, int val) {
             setI(i0, val);
+        }
+
+        public void set(int i0, int i1, int val) {
+            setI(i0, i1, val);
+        }
+
+        public int min(NDSliceRanges ndSliceRanges) {
+            return minI(ndSliceRanges);
         }
 
     }
@@ -312,7 +349,7 @@ public class Main {
 
     }
 
-    static class NDArray<T extends Number> {
+    static abstract class NDArray<T extends Number> {
         protected final int[] intBuffer;
         private final long[] longBuffer;
         private final double[] doubleBuffer;
@@ -341,14 +378,55 @@ public class Main {
             this.shape = new NDShape(capacity);
         }
 
+        public void reshape(NDShape shape) {
+            if (shape.size() > capacity) {
+                throw new RuntimeException("Capacity is not enough for size " + shape.size());
+            }
+            this.shape = shape;
+        }
+
         int getI(int i0) {
             assert (shape.rank() == 1);
             return intBuffer[i0];
         }
 
+        int getI(int i0, int i1) {
+            assert (shape.rank() == 2);
+            assert (0 <= i0 && i0 < shape.dim(0)) : "i0 = " + i0;
+            assert (0 <= i1 && i1 < shape.dim(1)) : "i1 = " + i1;
+            return intBuffer[shape.d2(i0, i1)];
+        }
+
+        int getI(NDIndex index) {
+            if (index.rank() == 1) {
+                return getI(index.index(0));
+            } else if (index.rank() == 2) {
+                return getI(index.index(0), index.index(1));
+            } else {
+                throw new RuntimeException("Unimplemented");
+            }
+        }
+
         void setI(int i0, int val) {
             assert (shape.rank() == 1);
             intBuffer[i0] = val;
+        }
+
+        void setI(int i0, int i1, int val) {
+            assert (shape.rank() == 2);
+            intBuffer[shape.d2(i0, i1)] = val;
+        }
+
+        int minI(NDSliceRanges ndSliceRanges) {
+            NDIndex index = NDIndex.startIndex(shape, ndSliceRanges);
+            int result = getI(index);
+            do {
+                int value = getI(index);
+                if (value < result) {
+                    result = value;
+                }
+            } while (index.next(shape, ndSliceRanges));
+            return result;
         }
 
         public String toString() {
@@ -387,6 +465,19 @@ public class Main {
             return dims.length;
         }
 
+        public int dim(int index) {
+            return dims[index];
+        }
+
+        public long size() {
+            return size;
+        }
+
+        public int d2(int i0, int i1) {
+            assert (dims.length == 2);
+            return i0 * dims[1] + i1;
+        }
+
         public String toString() {
             return "NDShape{" +
                     "dims=" + Arrays.toString(dims) +
@@ -396,27 +487,15 @@ public class Main {
 
     }
 
-    static final class GraphWeightUtils {
-        static int[] getEdgesSorted(Graph graph, Comparator<Integer> edgeComparison) {
-            Integer[] edge = new Integer[graph.numEdges()];
-            for (int i = 0; i < graph.numEdges(); i++) {
-                edge[i] = i;
-            }
-            Arrays.sort(edge, edgeComparison);
-            int[] result = new int[graph.numEdges()];
-            for (int i = 0; i < graph.numEdges(); i++) {
-                result[i] = edge[i];
-            }
-            return result;
-        }
-
-    }
-
     static class FastScanner {
         private final BufferedReader bufferedReader;
 
         public FastScanner(InputStream inputStream) {
             this.bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+        }
+
+        public int nextLineAsInt() throws IOException {
+            return Integer.parseInt(bufferedReader.readLine().trim());
         }
 
         public int[] readTokensAsIntArray(int capacity) throws IOException {
@@ -469,6 +548,86 @@ public class Main {
 
     }
 
+    static class HamiltonPathFinder<T extends Number> implements Algorithm<HamiltonPathFinder.Input<T>, HamiltonPathFinder.Output> {
+        private final Class<T> clz;
+
+        public HamiltonPathFinder(Class<T> clz) {
+            this.clz = clz;
+        }
+
+        public long getComplexity(HamiltonPathFinder.Input<T> input) {
+            return (long) Math.pow(2, input.graph.numVertices()) * input.graph.numVertices() * input.graph.numVertices();
+        }
+
+        public HamiltonPathFinder.Output run(HamiltonPathFinder.Input<T> input) {
+            HamiltonPathFinder.Output output = new HamiltonPathFinder.Output();
+
+            int n = input.graph.numVertices();
+
+            IntNDArray bestI = null;
+            NDShape shape = new NDShape(n, SmallBitSet.fullSet(n) + 1);
+            IntGraphWeight wI = null;
+            if (clz == Integer.class) {
+                bestI = new IntNDArray((int) shape.size());
+                bestI.reshape(shape);
+                wI = (IntGraphWeight) input.weight;
+            }
+
+            for (int set = 0; set <= SmallBitSet.fullSet(n); set++) {
+                for (int end = 0; end < n; end++) {
+                    if (clz == Integer.class) {
+                        bestI.set(end, set, set == SmallBitSet.singleElement(end) ? 0 : Integer.MAX_VALUE);
+                    }
+                }
+            }
+            for (int set = 0; set <= SmallBitSet.fullSet(n); set++) {
+                for (int end = 0; end < n; end++) {
+                    if (SmallBitSet.contains(set, end)) {
+                        for (int next = 0; next < n; next++) {
+                            if (!SmallBitSet.contains(set, next) && input.graph.hasEdge(end, next)) {
+                                int nextSet = SmallBitSet.union(set, next);
+                                if (clz == Integer.class) {
+                                    int current = bestI.get(end, set);
+                                    if (current != Integer.MAX_VALUE) {
+                                        int weight = wI.getWeight(end, next);
+                                        int nextBest = bestI.get(next, nextSet);
+                                        bestI.set(next, nextSet,
+                                                Math.min(nextBest, current + weight));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            if (clz == Integer.class) {
+                output.minimumWeight = bestI.min(NDSliceRanges.col2D(SmallBitSet.fullSet(n)));
+            }
+            return output;
+        }
+
+        public static final class Input<T extends Number> {
+            final Graph graph;
+            final GraphWeight<T> weight;
+
+            public Input(Graph graph, GraphWeight<T> weight) {
+                this.graph = graph;
+                this.weight = weight;
+            }
+
+        }
+
+        public static final class Output {
+            private double minimumWeight;
+
+            public double getMinimumWeight() {
+                return minimumWeight;
+            }
+
+        }
+
+    }
+
     static final class IntGraphWeight implements GraphWeight<Integer> {
         private final Graph graph;
         private final IntNDArray weight;
@@ -482,12 +641,19 @@ public class Main {
             weight.set(graph.getEdgeIndex(u, v), w);
         }
 
-        public Integer getWeight(int edgeId) {
-            return weight.get(edgeId);
+        public int getWeight(int u, int v) {
+            return weight.get(graph.getEdgeIndex(u, v));
         }
 
-        public int[] getEdgesSortedByWeight() {
-            return GraphWeightUtils.getEdgesSorted(graph, Comparator.comparingInt(this::getWeight));
+    }
+
+    static final class BitUtils {
+        public static boolean testBit(int value, int i) {
+            return (value & (1 << i)) != 0;
+        }
+
+        public static int setBit(int value, int i) {
+            return value | (1 << i);
         }
 
     }
