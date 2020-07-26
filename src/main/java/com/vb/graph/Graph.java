@@ -1,7 +1,7 @@
 package com.vb.graph;
 
 public interface Graph {
-    boolean isBidirected();
+    boolean isUndirected();
 
     int numVertices();
 
@@ -14,4 +14,8 @@ public interface Graph {
     int addEdge(int u, int v);
 
     int getEdgeIndex(int u, int v);
+
+    int getEdgeStart(int edgeId);
+
+    int getEdgeEnd(int edgeId);
 }

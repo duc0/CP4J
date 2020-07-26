@@ -16,9 +16,9 @@ public class GraphAdjList implements Graph {
     private final int[] prevEdgeIndexSameEnd;
     private final int[] degree;
     private final Map<Integer, Integer> edgeIndexes = new HashMap<>();
-    private final boolean bidirected;
+    private final boolean undirected;
 
-    public GraphAdjList(int numVertices, int edgeCapacity, boolean bidirected) {
+    public GraphAdjList(int numVertices, int edgeCapacity, boolean undirected) {
         this.numVertices = numVertices;
         this.edgeCapacity = edgeCapacity;
         this.start = new int[edgeCapacity];
@@ -29,7 +29,7 @@ public class GraphAdjList implements Graph {
         this.prevEdgeIndexSameStart = new int[edgeCapacity];
         this.prevEdgeIndexSameEnd = new int[edgeCapacity];
         this.degree = new int[numVertices];
-        this.bidirected = bidirected;
+        this.undirected = undirected;
         for (int u = 0; u < numVertices; u++) {
             lastEdgeIndexWithStart[u] = -1;
             lastEdgeIndexWithEnd[u] = -1;
@@ -40,8 +40,8 @@ public class GraphAdjList implements Graph {
     }
 
     @Override
-    public boolean isBidirected() {
-        return bidirected;
+    public boolean isUndirected() {
+        return undirected;
     }
 
     @Override
@@ -69,7 +69,7 @@ public class GraphAdjList implements Graph {
             idx = prevEdgeIndexSameStart[idx];
             resultIdx++;
         }
-        if (isBidirected()) {
+        if (isUndirected()) {
             idx = lastEdgeIndexWithEnd[vertex];
             while (idx >= 0) {
                 result[resultIdx] = start[idx];
@@ -94,7 +94,7 @@ public class GraphAdjList implements Graph {
         degree[u]++;
         int index = numEdges;
         edgeIndexes.put(getMatrixIndex(u, v), numEdges);
-        if (isBidirected()) {
+        if (isUndirected()) {
             degree[v]++;
             edgeIndexes.put(getMatrixIndex(v, u), numEdges);
         }
@@ -104,7 +104,7 @@ public class GraphAdjList implements Graph {
 
     @Override
     public int addEdge(int u, int v) {
-        if (isBidirected()) {
+        if (isUndirected()) {
             if (u < v) {
                 return addEdgeRaw(u, v);
             } else {
@@ -122,5 +122,15 @@ public class GraphAdjList implements Graph {
             throw new RuntimeException("Unable to find indexes for edge " + u + ", " + v);
         }
         return res;
+    }
+
+    @Override
+    public int getEdgeStart(int edgeId) {
+        return start[edgeId];
+    }
+
+    @Override
+    public int getEdgeEnd(int edgeId) {
+        return end[edgeId];
     }
 }

@@ -23,7 +23,7 @@ public class ConnectedComponentsDetector implements Algorithm<ConnectedComponent
 
     @Override
     public Output run(Input input) {
-        assert(input.graph.isBidirected());
+        assert(input.graph.isUndirected());
         Output output = new Output();
         output.component = new int[input.graph.numVertices()];
         for (int u = 0; u < input.graph.numVertices(); u++) {

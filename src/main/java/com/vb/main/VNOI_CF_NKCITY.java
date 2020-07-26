@@ -1,10 +1,7 @@
 package com.vb.main;
 
 import com.vb.algorithm.AlgorithmRunner;
-import com.vb.graph.ConnectedComponentsDetector;
-import com.vb.graph.Graph;
-import com.vb.graph.GraphAdjList;
-import com.vb.graph.IntGraphWeight;
+import com.vb.graph.*;
 import com.vb.io.FastScanner;
 import com.vb.io.FastWriter;
 import com.vb.nd.IntNDArray;
