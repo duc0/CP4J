@@ -12,6 +12,7 @@ public class KruskalAlgorithm<T extends Number>
 
     @Override
     public Output run(Input<T> input) {
+        assert(input.graph.isUndirected());
         DisjointSet dj = new DisjointSet(input.graph.numVertices());
         int[] sortedEdges = input.weight.getEdgesSortedByWeight();
         Output output = new Output();
@@ -20,7 +21,7 @@ public class KruskalAlgorithm<T extends Number>
             int v = input.graph.getEdgeEnd(edgeId);
             if (!dj.inSameSet(u, v)) {
                 dj.merge(u, v);
-                output.minimumWeight = output.minimumWeight + input.weight.getWeight(edgeId).doubleValue();
+                output.minimumWeight = output.minimumWeight + input.weight.getWeightBoxed(edgeId).doubleValue();
             }
         }
         return output;

@@ -15,6 +15,8 @@ public interface Graph {
 
     int getEdgeIndex(int u, int v);
 
+    boolean hasEdge(int u, int v);
+
     int getEdgeStart(int edgeId);
 
     int getEdgeEnd(int edgeId);

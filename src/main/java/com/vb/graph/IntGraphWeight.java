@@ -22,12 +22,17 @@ public final class IntGraphWeight implements GraphWeight<Integer> {
     }
 
     @Override
-    public Integer getWeight(int edgeId) {
+    public Integer getWeightBoxed(int edgeId) {
         return weight.get(edgeId);
     }
 
     @Override
     public int[] getEdgesSortedByWeight() {
-        return GraphWeightUtils.getEdgesSorted(graph, Comparator.comparingInt(this::getWeight));
+        return GraphWeightUtils.getEdgesSorted(graph, Comparator.comparingInt(this::getWeightBoxed));
+    }
+
+    @Override
+    public Integer getWeightBoxed(int u, int v) {
+        return getWeight(u, v);
     }
 }

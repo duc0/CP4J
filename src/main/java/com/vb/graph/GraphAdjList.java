@@ -125,6 +125,11 @@ public class GraphAdjList implements Graph {
     }
 
     @Override
+    public boolean hasEdge(int u, int v) {
+        return edgeIndexes.containsKey(getMatrixIndex(u, v));
+    }
+
+    @Override
     public int getEdgeStart(int edgeId) {
         return start[edgeId];
     }
