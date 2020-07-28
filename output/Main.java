@@ -53,29 +53,38 @@ public class Main {
 
     }
 
-    static class NDShape {
-        private final int[] dims;
-        private final long size;
-
-        public NDShape(int... dims) {
-            this.dims = dims;
-            long sz = 1;
-            for (int x : dims) {
-                sz *= x;
+    static final class GraphWeightUtils {
+        static int[] getEdgesSorted(Graph graph, Comparator<Integer> edgeComparison) {
+            Integer[] edge = new Integer[graph.numEdges()];
+            for (int i = 0; i < graph.numEdges(); i++) {
+                edge[i] = i;
             }
-            this.size = sz;
+            Arrays.sort(edge, edgeComparison);
+            int[] result = new int[graph.numEdges()];
+            for (int i = 0; i < graph.numEdges(); i++) {
+                result[i] = edge[i];
+            }
+            return result;
         }
 
-        public int rank() {
-            return dims.length;
-        }
+    }
 
-        public String toString() {
-            return "NDShape{" +
-                    "dims=" + Arrays.toString(dims) +
-                    ", size=" + size +
-                    '}';
-        }
+    static interface Graph {
+        boolean isUndirected();
+
+        int numVertices();
+
+        int numEdges();
+
+        int edgesCapacity();
+
+        int addEdge(int u, int v);
+
+        int getEdgeIndex(int u, int v);
+
+        int getEdgeStart(int edgeId);
+
+        int getEdgeEnd(int edgeId);
 
     }
 
@@ -90,49 +99,6 @@ public class Main {
 
         public void set(int i0, int val) {
             setI(i0, val);
-        }
-
-    }
-
-    static class KruskalAlgorithm<T extends Number> implements Algorithm<KruskalAlgorithm.Input<T>, KruskalAlgorithm.Output> {
-        public long getComplexity(KruskalAlgorithm.Input<T> input) {
-            return (long) (input.graph.numEdges() * Math.log(input.graph.numVertices()));
-        }
-
-        public KruskalAlgorithm.Output run(KruskalAlgorithm.Input<T> input) {
-            assert (input.graph.isUndirected());
-            DisjointSet dj = new DisjointSet(input.graph.numVertices());
-            int[] sortedEdges = input.weight.getEdgesSortedByWeight();
-            KruskalAlgorithm.Output output = new KruskalAlgorithm.Output();
-            for (int edgeId : sortedEdges) {
-                int u = input.graph.getEdgeStart(edgeId);
-                int v = input.graph.getEdgeEnd(edgeId);
-                if (!dj.inSameSet(u, v)) {
-                    dj.merge(u, v);
-                    output.minimumWeight = output.minimumWeight + input.weight.getWeightBoxed(edgeId).doubleValue();
-                }
-            }
-            return output;
-        }
-
-        public static final class Input<T extends Number> {
-            final Graph graph;
-            final GraphWeight<T> weight;
-
-            public Input(Graph graph, GraphWeight<T> weight) {
-                this.graph = graph;
-                this.weight = weight;
-            }
-
-        }
-
-        public static final class Output {
-            private double minimumWeight;
-
-            public double getMinimumWeight() {
-                return minimumWeight;
-            }
-
         }
 
     }
@@ -195,60 +161,27 @@ public class Main {
 
     }
 
-    static interface Algorithm<I, O> {
-        long getComplexity(I input);
+    static final class IntGraphWeight implements GraphWeight<Integer> {
+        private final Graph graph;
+        private final IntNDArray weight;
 
-        O run(I input);
-
-    }
-
-    static final class GraphWeightUtils {
-        static int[] getEdgesSorted(Graph graph, Comparator<Integer> edgeComparison) {
-            Integer[] edge = new Integer[graph.numEdges()];
-            for (int i = 0; i < graph.numEdges(); i++) {
-                edge[i] = i;
-            }
-            Arrays.sort(edge, edgeComparison);
-            int[] result = new int[graph.numEdges()];
-            for (int i = 0; i < graph.numEdges(); i++) {
-                result[i] = edge[i];
-            }
-            return result;
+        public IntGraphWeight(Graph graph) {
+            this.graph = graph;
+            this.weight = new IntNDArray(graph.edgesCapacity());
         }
 
-    }
-
-    static class FastScanner {
-        private final BufferedReader bufferedReader;
-
-        public FastScanner(InputStream inputStream) {
-            this.bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+        public void setWeight(int u, int v, int w) {
+            weight.set(graph.getEdgeIndex(u, v), w);
         }
 
-        public int[] readTokensAsIntArray(int capacity) throws IOException {
-            String line = bufferedReader.readLine();
-            int[] result = new int[capacity];
-            int cur = 0;
-            int pos = 0;
-            for (int i = 0; i <= line.length(); i++) {
-                char c = i == line.length() ? ' ' : line.charAt(i);
-                if ('0' <= c && c <= '9') {
-                    cur = cur * 10 + (c - '0');
-                } else {
-                    result[pos] = cur;
-                    pos++;
-                    cur = 0;
-                    if (pos >= capacity) {
-                        break;
-                    }
-                }
-            }
-            return result;
+        public Integer getWeightBoxed(int edgeId) {
+            return weight.get(edgeId);
         }
 
-    }
+        public int[] getEdgesSortedByWeight() {
+            return GraphWeightUtils.getEdgesSorted(graph, Comparator.comparingInt(this::getWeightBoxed));
+        }
 
-    static interface CPTaskSolver {
     }
 
     static class DisjointSet {
@@ -277,6 +210,105 @@ public class Main {
 
         public boolean inSameSet(int u, int v) {
             return getRoot(u) == getRoot(v);
+        }
+
+    }
+
+    static class FastWriter {
+        private final BufferedWriter bufferedWriter;
+
+        public FastWriter(OutputStream outputStream) {
+            bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream));
+        }
+
+        public FastWriter(Writer writer) {
+            bufferedWriter = new BufferedWriter(writer);
+        }
+
+        public void close() throws IOException {
+            bufferedWriter.flush();
+            bufferedWriter.close();
+        }
+
+        public void write(int token) throws IOException {
+            bufferedWriter.write(String.valueOf(token));
+            //bufferedWriter.flush();
+        }
+
+        public void flush() throws IOException {
+            bufferedWriter.flush();
+        }
+
+    }
+
+    static class KruskalAlgorithm<T extends Number> implements Algorithm<KruskalAlgorithm.Input<T>, KruskalAlgorithm.Output> {
+        public long getComplexity(KruskalAlgorithm.Input<T> input) {
+            return (long) (input.graph.numEdges() * Math.log(input.graph.numVertices()));
+        }
+
+        public KruskalAlgorithm.Output run(KruskalAlgorithm.Input<T> input) {
+            assert (input.graph.isUndirected());
+            DisjointSet dj = new DisjointSet(input.graph.numVertices());
+            int[] sortedEdges = input.weight.getEdgesSortedByWeight();
+            KruskalAlgorithm.Output output = new KruskalAlgorithm.Output();
+            for (int edgeId : sortedEdges) {
+                int u = input.graph.getEdgeStart(edgeId);
+                int v = input.graph.getEdgeEnd(edgeId);
+                if (!dj.inSameSet(u, v)) {
+                    dj.merge(u, v);
+                    output.minimumWeight = output.minimumWeight + input.weight.getWeightBoxed(edgeId).doubleValue();
+                }
+            }
+            return output;
+        }
+
+        public static final class Input<T extends Number> {
+            final Graph graph;
+            final GraphWeight<T> weight;
+
+            public Input(Graph graph, GraphWeight<T> weight) {
+                this.graph = graph;
+                this.weight = weight;
+            }
+
+        }
+
+        public static final class Output {
+            private double minimumWeight;
+
+            public double getMinimumWeight() {
+                return minimumWeight;
+            }
+
+        }
+
+    }
+
+    static interface CPTaskSolver {
+    }
+
+    static class NDShape {
+        private final int[] dims;
+        private final long size;
+
+        public NDShape(int... dims) {
+            this.dims = dims;
+            long sz = 1;
+            for (int x : dims) {
+                sz *= x;
+            }
+            this.size = sz;
+        }
+
+        public int rank() {
+            return dims.length;
+        }
+
+        public String toString() {
+            return "NDShape{" +
+                    "dims=" + Arrays.toString(dims) +
+                    ", size=" + size +
+                    '}';
         }
 
     }
@@ -315,6 +347,43 @@ public class Main {
                 return result;
             }
 
+        }
+
+    }
+
+    static interface Algorithm<I, O> {
+        long getComplexity(I input);
+
+        O run(I input);
+
+    }
+
+    static class FastScanner {
+        private final BufferedReader bufferedReader;
+
+        public FastScanner(InputStream inputStream) {
+            this.bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+        }
+
+        public int[] readTokensAsIntArray(int capacity) throws IOException {
+            String line = bufferedReader.readLine();
+            int[] result = new int[capacity];
+            int cur = 0;
+            int pos = 0;
+            for (int i = 0; i <= line.length(); i++) {
+                char c = i == line.length() ? ' ' : line.charAt(i);
+                if ('0' <= c && c <= '9') {
+                    cur = cur * 10 + (c - '0');
+                } else {
+                    result[pos] = cur;
+                    pos++;
+                    cur = 0;
+                    if (pos >= capacity) {
+                        break;
+                    }
+                }
+            }
+            return result;
         }
 
     }
@@ -418,75 +487,6 @@ public class Main {
 
         public int getEdgeEnd(int edgeId) {
             return end[edgeId];
-        }
-
-    }
-
-    static interface Graph {
-        boolean isUndirected();
-
-        int numVertices();
-
-        int numEdges();
-
-        int edgesCapacity();
-
-        int addEdge(int u, int v);
-
-        int getEdgeIndex(int u, int v);
-
-        int getEdgeStart(int edgeId);
-
-        int getEdgeEnd(int edgeId);
-
-    }
-
-    static class FastWriter {
-        private final BufferedWriter bufferedWriter;
-
-        public FastWriter(OutputStream outputStream) {
-            bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream));
-        }
-
-        public FastWriter(Writer writer) {
-            bufferedWriter = new BufferedWriter(writer);
-        }
-
-        public void close() throws IOException {
-            bufferedWriter.flush();
-            bufferedWriter.close();
-        }
-
-        public void write(int token) throws IOException {
-            bufferedWriter.write(String.valueOf(token));
-            //bufferedWriter.flush();
-        }
-
-        public void flush() throws IOException {
-            bufferedWriter.flush();
-        }
-
-    }
-
-    static final class IntGraphWeight implements GraphWeight<Integer> {
-        private final Graph graph;
-        private final IntNDArray weight;
-
-        public IntGraphWeight(Graph graph) {
-            this.graph = graph;
-            this.weight = new IntNDArray(graph.edgesCapacity());
-        }
-
-        public void setWeight(int u, int v, int w) {
-            weight.set(graph.getEdgeIndex(u, v), w);
-        }
-
-        public Integer getWeightBoxed(int edgeId) {
-            return weight.get(edgeId);
-        }
-
-        public int[] getEdgesSortedByWeight() {
-            return GraphWeightUtils.getEdgesSorted(graph, Comparator.comparingInt(this::getWeightBoxed));
         }
 
     }

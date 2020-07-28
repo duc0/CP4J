@@ -1,10 +1,8 @@
 package com.vb.main;
 
-import com.vb.datastructure.DisjointSet;
+import com.vb.kotlin.datastructure.DisjointSet;
 import com.vb.io.FastScanner;
 import com.vb.io.FastWriter;
-import com.vb.nd.IntNDArray;
-import com.vb.nd.NDShape;
 
 import java.io.IOException;
 
