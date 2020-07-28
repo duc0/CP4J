@@ -1,5 +1,5 @@
 {
-  "name" : "TestTask",
+  "name" : "VNOI_LATGACH",
   "testType" : "SINGLE",
   "input" : {
     "type" : "STANDARD",
@@ -9,19 +9,24 @@
     "type" : "STANDARD",
     "fileName" : "output.txt"
   },
-  "tests" : [ ],
+  "tests" : [ {
+    "input" : "3\n1\n2\n3\n",
+    "output" : "1\n2\n3",
+    "index" : 0,
+    "active" : true
+  } ],
   "location" : "src/main/java/com/vb/main",
   "vmArgs" : "-Xmx256m -Xss64m",
   "mainClass" : "Main",
-  "taskClass" : "com.vb.main.TestTask",
+  "taskClass" : "com.vb.main.VNOI_LATGACH",
   "checkerClass" : "net.egork.chelper.checkers.TokenChecker",
   "checkerParameters" : "",
   "testClasses" : [ ],
-  "date" : "2020.07.22",
-  "contestName" : "",
+  "date" : "2020.07.28",
+  "contestName" : "VNOI_CF",
   "truncate" : true,
-  "inputClass" : "java.util.Scanner",
-  "outputClass" : "java.io.PrintWriter",
+  "inputClass" : "com.vb.io.FastScanner",
+  "outputClass" : "com.vb.io.FastWriter",
   "includeLocale" : false,
   "failOnOverflow" : false,
   "interactive" : false,

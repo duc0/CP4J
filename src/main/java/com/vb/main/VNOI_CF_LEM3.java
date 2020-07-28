@@ -4,10 +4,12 @@ import com.vb.algorithm.AlgorithmRunner;
 import com.vb.graph.*;
 import com.vb.io.FastScanner;
 import com.vb.io.FastWriter;
+import com.vb.task.CPTaskSolver;
 
 import java.io.IOException;
 
-public class VNOI_CF_LEM3 {
+public class VNOI_CF_LEM3 implements CPTaskSolver {
+    @Override
     public void solve(int testNumber, FastScanner in, FastWriter out) throws IOException {
         int n = in.nextLineAsInt();
         Graph g = new GraphAdjList(n, n * n, false);
