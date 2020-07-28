@@ -5,7 +5,8 @@ import %OutputClassFQN%;
 
 import java.io.IOException;
 
-public class %TaskClass% {
+public class %TaskClass% implements CPTaskSolver {
+    @Override
     public void solve(int testNumber, %InputClass% in, %OutputClass% out) throws IOException {
          out.flush();
     }

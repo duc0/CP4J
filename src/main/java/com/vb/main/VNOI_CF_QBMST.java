@@ -7,10 +7,12 @@ import com.vb.graph.IntGraphWeight;
 import com.vb.graph.KruskalAlgorithm;
 import com.vb.io.FastScanner;
 import com.vb.io.FastWriter;
+import com.vb.task.CPTaskSolver;
 
 import java.io.IOException;
 
-public class VNOI_CF_QBMST {
+public class VNOI_CF_QBMST implements CPTaskSolver {
+    @Override
     public void solve(int testNumber, FastScanner in, FastWriter out) throws IOException {
         int[] firstLine = in.readTokensAsIntArray(2);
         int nNodes = firstLine[0];
