@@ -1,6 +1,5 @@
 package com.vb.io;
 
-import com.vb.nd.IntNDArray;
 import com.vb.nd.NDShape;
 
 import java.io.BufferedReader;

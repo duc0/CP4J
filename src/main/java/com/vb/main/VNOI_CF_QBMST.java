@@ -3,7 +3,7 @@ package com.vb.main;
 import com.vb.algorithm.AlgorithmRunner;
 import com.vb.graph.Graph;
 import com.vb.graph.GraphAdjList;
-import com.vb.graph.IntGraphWeight;
+import com.vb.graph.GraphWeight;
 import com.vb.graph.KruskalAlgorithm;
 import com.vb.io.FastScanner;
 import com.vb.io.FastWriter;
@@ -18,7 +18,7 @@ public class VNOI_CF_QBMST implements CPTaskSolver {
         int nNodes = firstLine[0];
         int nEdges = firstLine[1];
         Graph g = new GraphAdjList(nNodes, nEdges, true);
-        IntGraphWeight weight = new IntGraphWeight(g);
+        GraphWeight weight = new GraphWeight(g);
         for (int i = 0; i < nEdges; i++) {
             int[] line = in.readTokensAsIntArray(3);
             int u = line[0] - 1;
@@ -26,7 +26,7 @@ public class VNOI_CF_QBMST implements CPTaskSolver {
             g.addEdge(u, v);
             weight.setWeight(u, v, line[2]);
         }
-        KruskalAlgorithm<Integer> kruskal = new KruskalAlgorithm<>();
+        KruskalAlgorithm<Integer> kruskal = new KruskalAlgorithm<>(arithmetic);
         KruskalAlgorithm.Input<Integer> input = new KruskalAlgorithm.Input(g, weight);
         out.write((int) AlgorithmRunner.runAlgorithm(kruskal, input).getResult().getMinimumWeight());
         out.flush();

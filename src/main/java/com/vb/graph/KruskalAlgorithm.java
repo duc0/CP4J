@@ -2,16 +2,24 @@ package com.vb.graph;
 
 import com.vb.algorithm.Algorithm;
 import com.vb.datastructure.DisjointSet;
+import com.vb.number.GenericNumber;
+import com.vb.number.Arithmetic;
 
-public class KruskalAlgorithm<T extends Number>
-        implements Algorithm<KruskalAlgorithm.Input<T>, KruskalAlgorithm.Output> {
+public class KruskalAlgorithm
+        implements Algorithm<KruskalAlgorithm.Input, KruskalAlgorithm.Output> {
+    private final Arithmetic arithmetic;
+
+    public KruskalAlgorithm(Arithmetic arithmetic) {
+        this.arithmetic = arithmetic;
+    }
+
     @Override
-    public long getComplexity(Input<T> input) {
+    public long getComplexity(Input input) {
         return (long) (input.graph.numEdges() * Math.log(input.graph.numVertices()));
     }
 
     @Override
-    public Output run(Input<T> input) {
+    public Output run(Input input) {
         assert(input.graph.isUndirected());
         DisjointSet dj = new DisjointSet(input.graph.numVertices());
         int[] sortedEdges = input.weight.getEdgesSortedByWeight();
@@ -21,26 +29,25 @@ public class KruskalAlgorithm<T extends Number>
             int v = input.graph.getEdgeEnd(edgeId);
             if (!dj.inSameSet(u, v)) {
                 dj.merge(u, v);
-                output.minimumWeight = output.minimumWeight + input.weight.getWeightBoxed(edgeId).doubleValue();
+                output.minimumWeight = arithmetic.add(output.minimumWeight, input.weight.getWeight(edgeId));
             }
         }
         return output;
     }
 
-    public static final class Input<T extends Number> {
+    public static final class Input {
         final Graph graph;
-        final GraphWeight<T> weight;
+        final GraphWeight weight;
 
-        public Input(Graph graph, GraphWeight<T> weight) {
+        public Input(Graph graph, GraphWeight weight) {
             this.graph = graph;
             this.weight = weight;
         }
     }
 
     public static final class Output {
-        private double minimumWeight;
-
-        public double getMinimumWeight() {
+        private GenericNumber minimumWeight;
+        public GenericNumber getMinimumWeight() {
             return minimumWeight;
         }
     }

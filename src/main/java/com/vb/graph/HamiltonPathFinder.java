@@ -2,41 +2,37 @@ package com.vb.graph;
 
 import com.vb.algorithm.Algorithm;
 import com.vb.bit.SmallBitSet;
-import com.vb.nd.*;
+import com.vb.nd.NDArray;
+import com.vb.nd.NDShape;
+import com.vb.nd.NDSliceRanges;
+import com.vb.number.GenericNumber;
+import com.vb.number.Arithmetic;
 
-public class HamiltonPathFinder<T extends Number>
-        implements Algorithm<HamiltonPathFinder.Input<T>, HamiltonPathFinder.Output> {
-    private final Class<T> clz;
+public class HamiltonPathFinder
+        implements Algorithm<HamiltonPathFinder.Input, HamiltonPathFinder.Output> {
+    private final Arithmetic arithmetic;
 
-    public HamiltonPathFinder(Class<T> clz) {
-        this.clz = clz;
+    public HamiltonPathFinder(Arithmetic arithmetic) {
+        this.arithmetic = arithmetic;
     }
 
     @Override
-    public long getComplexity(Input<T> input) {
+    public long getComplexity(Input input) {
         return (long) Math.pow(2, input.graph.numVertices()) * input.graph.numVertices() * input.graph.numVertices();
     }
 
     @Override
-    public Output run(Input<T> input) {
+    public Output run(Input input) {
         Output output = new Output();
 
         int n = input.graph.numVertices();
 
-        IntNDArray bestI = null;
         NDShape shape = new NDShape(n, SmallBitSet.fullSet(n) + 1);
-        IntGraphWeight wI = null;
-        if (clz == Integer.class) {
-            bestI = new IntNDArray((int) shape.size());
-            bestI.reshape(shape);
-            wI = (IntGraphWeight) input.weight;
-        }
-
+        NDArray best = new NDArray(arithmetic, (int)shape.size());
+        best.reshape(shape);
         for (int set = 0; set <= SmallBitSet.fullSet(n); set++) {
             for (int end = 0; end < n; end++) {
-                if (clz == Integer.class) {
-                    bestI.set(end, set, set == SmallBitSet.singleElement(end) ? 0 : Integer.MAX_VALUE);
-                }
+                best.set(end, set, set == SmallBitSet.singleElement(end) ? arithmetic.zero() : arithmetic.maxValue());
             }
         }
         for (int set = 0; set <= SmallBitSet.fullSet(n); set++) {
@@ -45,39 +41,35 @@ public class HamiltonPathFinder<T extends Number>
                     for (int next = 0; next < n; next++) {
                         if (!SmallBitSet.contains(set, next) && input.graph.hasEdge(end, next)) {
                             int nextSet = SmallBitSet.union(set, next);
-                            if (clz == Integer.class) {
-                                int current = bestI.get(end, set);
-                                if (current != Integer.MAX_VALUE) {
-                                    int weight = wI.getWeight(end, next);
-                                    int nextBest = bestI.get(next, nextSet);
-                                    bestI.set(next, nextSet,
-                                            Math.min(nextBest, current + weight));
-                                }
+                            GenericNumber current = best.get(end, set);
+                            if (arithmetic.isEqual(current, arithmetic.maxValue())) {
+                                GenericNumber weight = input.weight.getWeight(end, next);
+                                GenericNumber nextBest = best.get(next, nextSet);
+                                best.set(next, nextSet,
+                                        arithmetic.min(nextBest, arithmetic.add(current, weight)));
                             }
                         }
                     }
                 }
             }
         }
-        if (clz == Integer.class) {
-            output.minimumWeight = bestI.min(NDSliceRanges.col2D(SmallBitSet.fullSet(n)));
-        }
+        output.minimumWeight = best.min(NDSliceRanges.col2D(SmallBitSet.fullSet(n)));
         return output;
     }
 
-    public static final class Input<T extends Number> {
+    public static final class Input {
         final Graph graph;
-        final GraphWeight<T> weight;
+        final GraphWeight weight;
 
-        public Input(Graph graph, GraphWeight<T> weight) {
+        public Input(Graph graph, GraphWeight weight) {
             this.graph = graph;
             this.weight = weight;
         }
     }
 
     public static final class Output {
-        private double minimumWeight;
-        public double getMinimumWeight() {
+        private GenericNumber minimumWeight;
+        public GenericNumber getMinimumWeight() {
             return minimumWeight;
         }
     }
