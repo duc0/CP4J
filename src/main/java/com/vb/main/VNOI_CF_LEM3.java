@@ -13,7 +13,7 @@ public class VNOI_CF_LEM3 implements CPTaskSolver {
     public void solve(int testNumber, FastScanner in, FastWriter out) throws IOException {
         int n = in.nextLineAsInt();
         Graph g = new GraphAdjList(n, n * n, false);
-        IntGraphWeight weight = new IntGraphWeight(g);
+        GraphWeight weight = new GraphWeight(g);
         for (int i = 0; i < n; i++) {
             int[] row = in.readTokensAsIntArray(n);
             for (int j = 0; j < n; j++) {

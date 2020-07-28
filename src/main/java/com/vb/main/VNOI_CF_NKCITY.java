@@ -4,7 +4,6 @@ import com.vb.algorithm.AlgorithmRunner;
 import com.vb.graph.*;
 import com.vb.io.FastScanner;
 import com.vb.io.FastWriter;
-import com.vb.nd.IntNDArray;
 import com.vb.search.BinarySearch;
 
 import java.io.IOException;
@@ -15,7 +14,7 @@ public class VNOI_CF_NKCITY {
         int n = size.get(0);
         int m = size.get(1);
         Graph graph = new GraphAdjList(n, m * 2, true);
-        IntGraphWeight cost = new IntGraphWeight(graph);
+        GraphWeight cost = new GraphWeight(graph);
         int minWeight = Integer.MAX_VALUE;
         int maxWeight = Integer.MIN_VALUE;
         for (int i = 0; i < m; i++) {

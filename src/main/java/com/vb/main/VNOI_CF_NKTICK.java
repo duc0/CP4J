@@ -2,7 +2,6 @@ package com.vb.main;
 
 import com.vb.io.FastScanner;
 import com.vb.io.FastWriter;
-import com.vb.nd.IntNDArray;
 
 import java.io.IOException;
 

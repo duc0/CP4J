@@ -1,33 +1,20 @@
 package com.vb.nd;
 
+import com.vb.number.GenericNumber;
+import com.vb.number.Arithmetic;
+
 import java.util.Arrays;
 
-public abstract class NDArray<T extends Number> {
-    protected final int[] intBuffer;
-    private final long[] longBuffer;
-    private final double[] doubleBuffer;
+public class NDArray {
+    private final Arithmetic arithmetic;
     private final int capacity;
-    private final Class<T> clz;
+    protected final GenericNumber[] buffer;
     protected NDShape shape;
 
-    NDArray(int capacity, Class<T> clz) {
-        this.clz = clz;
+    public NDArray(Arithmetic arithmetic, int capacity) {
+        this.arithmetic = arithmetic;
         this.capacity = capacity;
-        if (clz == Double.class) {
-            this.doubleBuffer = new double[capacity];
-            this.longBuffer = null;
-            this.intBuffer = null;
-        } else if (clz == Long.class) {
-            this.longBuffer = new long[capacity];
-            this.doubleBuffer = null;
-            this.intBuffer = null;
-        } else if (clz == Integer.class) {
-            this.intBuffer = new int[capacity];
-            this.doubleBuffer = null;
-            this.longBuffer = null;
-        } else {
-            throw new RuntimeException("Unsupported number types");
-        }
+        this.buffer = new GenericNumber[capacity];
         this.shape = new NDShape(capacity);
     }
 
@@ -38,119 +25,82 @@ public abstract class NDArray<T extends Number> {
         this.shape = shape;
     }
 
-
-    long getL(int i0) {
-        assert(shape.rank() == 1);
-        return longBuffer[i0];
+    public GenericNumber get(int i0) {
+        assert (shape.rank() == 1);
+        return buffer[i0];
     }
 
-    long getL(int i0, int i1) {
-        assert(shape.rank() == 2);
-        return longBuffer[shape.d2(i0, i1)];
+    public GenericNumber get(int i0, int i1) {
+        assert (shape.rank() == 2);
+        assert (0 <= i0 && i0 < shape.dim(0)) : "i0 = " + i0;
+        assert (0 <= i1 && i1 < shape.dim(1)) : "i1 = " + i1;
+        return buffer[shape.d2(i0, i1)];
     }
 
-    void setL(int i0, long val) {
-        assert(shape.rank() == 1);
-        longBuffer[i0] = val;
-    }
-
-    void setL(int i0, int i1, long val) {
-        assert(shape.rank() == 2);
-        longBuffer[shape.d2(i0, i1)] = val;
-    }
-
-    void setIfMoreL(int i0, long val) {
-        assert(shape.rank() == 1);
-        if (val > longBuffer[i0]) {
-            longBuffer[i0] = val;
-        }
-    }
-
-    int getI(int i0) {
-        assert(shape.rank() == 1);
-        return intBuffer[i0];
-    }
-
-    int getI(int i0, int i1) {
-        assert(shape.rank() == 2);
-        assert(0 <= i0 && i0 < shape.dim(0)) : "i0 = " + i0;
-        assert(0 <= i1 && i1 < shape.dim(1)) : "i1 = " + i1;
-        return intBuffer[shape.d2(i0, i1)];
-    }
-
-    int getI(NDIndex index) {
+    GenericNumber get(NDIndex index) {
         if (index.rank() == 1) {
-            return getI(index.index(0));
+            return get(index.index(0));
         } else if (index.rank() == 2) {
-            return getI(index.index(0), index.index(1));
+            return get(index.index(0), index.index(1));
         } else {
             throw new RuntimeException("Unimplemented");
         }
     }
 
-    void setI(int i0, int val) {
-        assert(shape.rank() == 1);
-        intBuffer[i0] = val;
+    public void set(int i0, GenericNumber val) {
+        assert (shape.rank() == 1);
+        buffer[i0] = val;
     }
 
-    void setI(int i0, int i1, int val) {
-        assert(shape.rank() == 2);
-        intBuffer[shape.d2(i0, i1)] = val;
+    public void set(int i0, int i1, GenericNumber val) {
+        assert (shape.rank() == 2);
+        buffer[shape.d2(i0, i1)] = val;
     }
 
-    int maxI() {
-        return maxI(NDSliceRanges.all(shape.rank()));
+    GenericNumber max() {
+        return max(NDSliceRanges.all(shape.rank()));
     }
 
-    int maxI(NDSliceRanges ndSliceRanges) {
+    GenericNumber max(NDSliceRanges ndSliceRanges) {
         NDIndex index = NDIndex.startIndex(shape, ndSliceRanges);
-        int result = getI(index);
+        GenericNumber result = get(index);
         do {
-          int value = getI(index);
-          if (value > result) {
-              result = value;
-          }
-        } while (index.next(shape, ndSliceRanges));
-        return result;
-    }
-
-    int minI() {
-        return minI(NDSliceRanges.all(shape.rank()));
-    }
-
-    int minI(NDSliceRanges ndSliceRanges) {
-        NDIndex index = NDIndex.startIndex(shape, ndSliceRanges);
-        int result = getI(index);
-        do {
-            int value = getI(index);
-            if (value < result) {
+            GenericNumber value = get(index);
+            if (arithmetic.compare(value, result) > 0) {
                 result = value;
             }
         } while (index.next(shape, ndSliceRanges));
         return result;
     }
 
-    void setIfMoreI(int i0, int val) {
-        assert(shape.rank() == 1);
-        if (val > intBuffer[i0]) {
-            intBuffer[i0] = val;
+    GenericNumber min() {
+        return min(NDSliceRanges.all(shape.rank()));
+    }
+
+    public GenericNumber min(NDSliceRanges ndSliceRanges) {
+        NDIndex index = NDIndex.startIndex(shape, ndSliceRanges);
+        GenericNumber result = get(index);
+        do {
+            GenericNumber value = get(index);
+            if (arithmetic.compare(value, result) < 0) {
+                result = value;
+            }
+        } while (index.next(shape, ndSliceRanges));
+        return result;
+    }
+
+    void setIfMore(int i0, GenericNumber val) {
+        assert (shape.rank() == 1);
+        if (arithmetic.compare(val, buffer[i0]) > 0) {
+            buffer[i0] = val;
         }
     }
 
     @Override
     public String toString() {
-        String array = "";
-        if (clz == Double.class) {
-            array = Arrays.toString(doubleBuffer);
-        } else if (clz == Long.class) {
-            array = Arrays.toString(longBuffer);
-        } else if (clz == Integer.class) {
-            array = Arrays.toString(intBuffer);
-        }
         return "NDArray{" +
-                "buffer=" + array +
+                "buffer=" + Arrays.toString(buffer) +
                 ", capacity=" + capacity +
-                ", clz=" + clz +
                 ", shape=" + shape +
                 '}';
     }
