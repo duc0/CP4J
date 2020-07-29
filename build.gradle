@@ -8,6 +8,7 @@ plugins {
 }
 
 apply plugin: 'maven-publish'
+apply plugin: 'idea'
 
 group 'com.vb.cp4j'
 version '0.1'
@@ -59,5 +60,11 @@ publishing {
                 description = 'A high performant, modularized data structures and algorithm Java library for programming contests.'
             }
         }
+    }
+}
+
+idea {
+    module {
+        generatedSourceDirs += file("src/generated/java")
     }
 }
