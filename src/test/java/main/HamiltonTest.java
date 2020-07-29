@@ -1,7 +1,6 @@
 package main;
 
-import com.vb.main.VNOI_CF_LEM3;
-import com.vb.main.VNOI_CF_QBMST;
+import com.vb.tasks.VNOI_CF_LEM3;
 import org.junit.Test;
 
 public class HamiltonTest {

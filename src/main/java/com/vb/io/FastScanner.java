@@ -2,6 +2,7 @@ package com.vb.io;
 
 import com.vb.nd.IntNDArray;
 import com.vb.nd.NDShape;
+import com.vb.number.DefaultIntArithmetic;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -27,28 +28,6 @@ public class FastScanner {
         return bufferedReader.readLine().trim().split("\\s+");
     }
 
-    public int[] readTokensAsIntArray(int capacity) throws IOException {
-        String line = bufferedReader.readLine();
-        int[] result = new int[capacity];
-        int cur = 0;
-        int pos = 0;
-        for (int i = 0; i <= line.length(); i++) {
-            char c = i == line.length() ? ' ' : line.charAt(i);
-            if ('0' <= c && c <= '9') {
-                cur = cur * 10 + (c - '0');
-            } else {
-                result[pos] = cur;
-                pos++;
-                cur = 0;
-                if (pos >= capacity) {
-                    break;
-                }
-            }
-        }
-        return result;
-    }
-
-
     public NDShape nextLineAsShape() throws IOException {
         String[] tokens = readTokens();
         int[] dims = new int[tokens.length];
@@ -60,7 +39,7 @@ public class FastScanner {
 
     public IntNDArray nextLineAsIntArray() throws IOException {
         String[] tokens = readTokens();
-        IntNDArray result = new IntNDArray(null, tokens.length);
+        IntNDArray result = new IntNDArray(new DefaultIntArithmetic(), tokens.length);
         for (int i = 0; i < tokens.length; i++) {
             result.set(i, Integer.parseInt(tokens[i]));
         }
@@ -69,13 +48,22 @@ public class FastScanner {
 
     public IntNDArray nextLinesAs2DIntArray(NDShape shape) throws IOException {
         assert(shape.rank() == 2);
-        IntNDArray result = new IntNDArray(null, (int) shape.size());
+        IntNDArray result = new IntNDArray(new DefaultIntArithmetic(), (int) shape.size());
         result.reshape(shape);
         for (int row = 0; row < shape.dim(0); row++) {
-            int[] tokens = readTokensAsIntArray(shape.dim(1));
+            String[] tokens = readTokens();
             for (int col = 0; col < tokens.length; col++) {
-                result.set(row, col, tokens[col]);
+                result.set(row, col, Integer.parseInt(tokens[col]));
             }
+        }
+        return result;
+    }
+
+    public int[] readTokensAsIntArray() throws IOException {
+        String[] tokens = readTokens();
+        int[] result = new int[tokens.length];
+        for (int i = 0; i < tokens.length; i++) {
+            result[i] = Integer.parseInt(tokens[i]);
         }
         return result;
     }

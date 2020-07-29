@@ -1,14 +1,16 @@
-package com.vb.main;
+package com.vb.tasks;
 
 import com.vb.io.FastScanner;
 import com.vb.io.FastWriter;
 import com.vb.nd.IntNDArray;
 import com.vb.nd.NDShape;
 import com.vb.nd.NDSliceRanges;
+import com.vb.task.CPTaskSolver;
 
 import java.io.IOException;
 
-public class VNOI_CF_QBMAX {
+public class VNOI_CF_QBMAX implements CPTaskSolver {
+    @Override
     public void solve(int testNumber, FastScanner in, FastWriter out) throws IOException {
         NDShape size = in.nextLineAsShape();
         IntNDArray matrix = in.nextLinesAs2DIntArray(size);
@@ -28,5 +30,6 @@ public class VNOI_CF_QBMAX {
         }
 
         out.write(matrix.max(NDSliceRanges.col2D(-1)));
+        out.flush();
     }
 }

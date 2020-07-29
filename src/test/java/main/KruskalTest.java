@@ -1,6 +1,6 @@
 package main;
 
-import com.vb.main.VNOI_CF_QBMST;
+import com.vb.tasks.VNOI_CF_QBMST;
 import org.junit.Test;
 
 public class KruskalTest {

@@ -1,12 +1,14 @@
-package com.vb.main;
+package com.vb.tasks;
 
 import com.vb.datastructure.DisjointSet;
 import com.vb.io.FastScanner;
 import com.vb.io.FastWriter;
+import com.vb.task.CPTaskSolver;
 
 import java.io.IOException;
 
-public class VNOI_CF_IOIBIN {
+public class VNOI_CF_IOIBIN implements CPTaskSolver {
+    @Override
     public void solve(int testNumber, FastScanner in, FastWriter out) throws IOException {
         /*int q = in.nextLineAsInt();
         IntNDArray input = in.nextLinesAs2DIntArray(new NDShape(q, 3));
@@ -31,7 +33,7 @@ public class VNOI_CF_IOIBIN {
         int q = in.nextLineAsInt();
         DisjointSet ds = new DisjointSet(10000);
         for (int i = 0; i < q; i++) {
-            int[] line = in.readTokensAsIntArray(3);
+            int[] line = in.readTokensAsIntArray();
             int u = line[0] - 1;
             int v = line[1] - 1;
             int t = line[2];

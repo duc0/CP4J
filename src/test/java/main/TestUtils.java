@@ -44,6 +44,6 @@ public final class TestUtils {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        assertEquals(sw.toString(), fileToString("testData/" + testName + ".out"));
+        assertEquals(sw.toString().trim(), fileToString("testData/" + testName + ".out").trim());
     }
 }

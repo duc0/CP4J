@@ -1,18 +1,18 @@
-package com.vb.main;
+package com.vb.tasks;
 
+import com.vb.io.FastScanner;
+import com.vb.io.FastWriter;
 import com.vb.nd.IntNDArray;
 import com.vb.number.DefaultIntArithmetic;
+import com.vb.task.CPTaskSolver;
 
-import java.io.PrintWriter;
-import java.util.Scanner;
+import java.io.IOException;
 
-public class VNOI_CF_LIQ {
-    public void solve(int testNumber, Scanner in, PrintWriter out) {
-        int len = in.nextInt();
-        int[] inp = new int[len];
-        for (int idx = 0; idx < len; idx++) {
-            inp[idx] = in.nextInt();
-        }
+public class VNOI_CF_LIQ implements CPTaskSolver {
+    @Override
+    public void solve(int testNumber, FastScanner in, FastWriter out) throws IOException {
+        int len = in.nextLineAsInt();
+        int[] inp = in.readTokensAsIntArray();
         IntNDArray f = new IntNDArray(new DefaultIntArithmetic(), len);
         for (int idx = 0; idx < len; idx++) {
             f.set(idx, 1);
@@ -22,7 +22,7 @@ public class VNOI_CF_LIQ {
                 }
             }
         }
-        out.print(f.max());
+        out.write(f.max());
         out.flush();
     }
 }

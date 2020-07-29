@@ -1,5 +1,5 @@
 {
-  "name" : "VNOI_CF_NKTICK",
+  "name" : "VNOI_CF_LEM3",
   "testType" : "SINGLE",
   "input" : {
     "type" : "STANDARD",
@@ -10,19 +10,19 @@
     "fileName" : "output.txt"
   },
   "tests" : [ {
-    "input" : "5 \n2 5 7 8 4\n4 9 10 10",
-    "output" : "18",
+    "input" : "6\n0 1 2 1 3 4 \n5 0 3 2 3 4 \n4 1 0 2 1 2 \n4 2 5 0 4 3 \n2 5 3 5 0 2 \n5 4 3 3 1 0 ",
+    "output" : "8",
     "index" : 0,
     "active" : true
   } ],
   "location" : "src/main/java/com/vb/main",
-  "vmArgs" : "-Xmx256m -Xss64m",
+  "vmArgs" : "-Xmx256m -Xss64m -ea",
   "mainClass" : "Main",
-  "taskClass" : "com.vb.tasks.VNOI_CF_NKTICK",
+  "taskClass" : "com.vb.main.VNOI_CF_LEM3",
   "checkerClass" : "net.egork.chelper.checkers.TokenChecker",
   "checkerParameters" : "",
   "testClasses" : [ ],
-  "date" : "2020.07.22",
+  "date" : "2020.07.25",
   "contestName" : "VNOI_CF",
   "truncate" : true,
   "inputClass" : "com.vb.io.FastScanner",

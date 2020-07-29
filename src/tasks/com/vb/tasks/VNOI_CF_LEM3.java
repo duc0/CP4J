@@ -1,4 +1,4 @@
-package com.vb.main;
+package com.vb.tasks;
 
 import com.vb.algorithm.AlgorithmRunner;
 import com.vb.graph.Graph;
@@ -22,7 +22,7 @@ public class VNOI_CF_LEM3 implements CPTaskSolver {
         IntArithmetic arithmetic = new DefaultIntArithmetic();
         IntGraphWeight weight = new IntGraphWeight(arithmetic, g);
         for (int i = 0; i < n; i++) {
-            int[] row = in.readTokensAsIntArray(n);
+            int[] row = in.readTokensAsIntArray();
             for (int j = 0; j < n; j++) {
                 if (i != j && row[j] > 0) {
                     g.addEdge(i, j);
