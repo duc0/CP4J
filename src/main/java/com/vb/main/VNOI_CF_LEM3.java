@@ -11,7 +11,7 @@ import java.io.IOException;
 public class VNOI_CF_LEM3 implements CPTaskSolver {
     @Override
     public void solve(int testNumber, FastScanner in, FastWriter out) throws IOException {
-        int n = in.nextLineAsInt();
+        /*int n = in.nextLineAsInt();
         Graph g = new GraphAdjList(n, n * n, false);
         GraphWeight weight = new GraphWeight(g);
         for (int i = 0; i < n; i++) {
@@ -23,10 +23,10 @@ public class VNOI_CF_LEM3 implements CPTaskSolver {
                 }
             }
         }
-        HamiltonPathFinder<Integer> hpf = new HamiltonPathFinder<>(Integer.class);
-        HamiltonPathFinder.Input<Integer> input = new HamiltonPathFinder.Input(g, weight);
+        GenericHamiltonPathFinder<Integer> hpf = new GenericHamiltonPathFinder<>(Integer.class);
+        GenericHamiltonPathFinder.Input<Integer> input = new GenericHamiltonPathFinder.Input(g, weight);
         out.write((int) AlgorithmRunner.runAlgorithm(hpf, input).getResult().getMinimumWeight());
         out.flush();
-        out.flush();
+        out.flush();*/
     }
 }

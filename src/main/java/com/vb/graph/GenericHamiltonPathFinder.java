@@ -2,17 +2,17 @@ package com.vb.graph;
 
 import com.vb.algorithm.Algorithm;
 import com.vb.bit.SmallBitSet;
-import com.vb.nd.NDArray;
+import com.vb.nd.GenericNDArray;
 import com.vb.nd.NDShape;
 import com.vb.nd.NDSliceRanges;
-import com.vb.number.GenericNumber;
+import com.vb.number.NumberGeneric;
 import com.vb.number.Arithmetic;
 
-public class HamiltonPathFinder
-        implements Algorithm<HamiltonPathFinder.Input, HamiltonPathFinder.Output> {
+public class GenericHamiltonPathFinder
+        implements Algorithm<GenericHamiltonPathFinder.Input, GenericHamiltonPathFinder.Output> {
     private final Arithmetic arithmetic;
 
-    public HamiltonPathFinder(Arithmetic arithmetic) {
+    public GenericHamiltonPathFinder(Arithmetic arithmetic) {
         this.arithmetic = arithmetic;
     }
 
@@ -28,7 +28,7 @@ public class HamiltonPathFinder
         int n = input.graph.numVertices();
 
         NDShape shape = new NDShape(n, SmallBitSet.fullSet(n) + 1);
-        NDArray best = new NDArray(arithmetic, (int)shape.size());
+        GenericNDArray best = new GenericNDArray(arithmetic, (int)shape.size());
         best.reshape(shape);
         for (int set = 0; set <= SmallBitSet.fullSet(n); set++) {
             for (int end = 0; end < n; end++) {
@@ -41,10 +41,10 @@ public class HamiltonPathFinder
                     for (int next = 0; next < n; next++) {
                         if (!SmallBitSet.contains(set, next) && input.graph.hasEdge(end, next)) {
                             int nextSet = SmallBitSet.union(set, next);
-                            GenericNumber current = best.get(end, set);
+                            NumberGeneric current = best.get(end, set);
                             if (arithmetic.isEqual(current, arithmetic.maxValue())) {
-                                GenericNumber weight = input.weight.getWeight(end, next);
-                                GenericNumber nextBest = best.get(next, nextSet);
+                                NumberGeneric weight = input.weight.getWeight(end, next);
+                                NumberGeneric nextBest = best.get(next, nextSet);
                                 best.set(next, nextSet,
                                         arithmetic.min(nextBest, arithmetic.add(current, weight)));
                             }
@@ -68,8 +68,8 @@ public class HamiltonPathFinder
     }
 
     public static final class Output {
-        private GenericNumber minimumWeight;
-        public GenericNumber getMinimumWeight() {
+        private NumberGeneric minimumWeight;
+        public NumberGeneric getMinimumWeight() {
             return minimumWeight;
         }
     }
