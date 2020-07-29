@@ -2,16 +2,16 @@ package com.vb.graph;
 
 import com.vb.nd.GenericNDArray;
 import com.vb.number.NumberGeneric;
-import com.vb.number.Arithmetic;
+import com.vb.number.GenericArithmetic;
 
 import java.util.Arrays;
 
-public final class GraphWeight {
-    private final Arithmetic arithmetic;
+public final class GenericGraphWeight {
+    private final GenericArithmetic arithmetic;
     private final Graph graph;
     private final GenericNDArray weight;
 
-    public GraphWeight(Arithmetic arithmetic, Graph graph) {
+    public GenericGraphWeight(GenericArithmetic arithmetic, Graph graph) {
         this.arithmetic = arithmetic;
         this.graph = graph;
         this.weight = new GenericNDArray(arithmetic, graph.edgesCapacity());

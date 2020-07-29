@@ -1,17 +1,17 @@
 package com.vb.nd;
 
 import com.vb.number.NumberGeneric;
-import com.vb.number.Arithmetic;
+import com.vb.number.GenericArithmetic;
 
 import java.util.Arrays;
 
 public class GenericNDArray {
-    private final Arithmetic arithmetic;
+    private final GenericArithmetic arithmetic;
     private final int capacity;
     protected final NumberGeneric[] buffer;
     protected NDShape shape;
 
-    public GenericNDArray(Arithmetic arithmetic, int capacity) {
+    public GenericNDArray(GenericArithmetic arithmetic, int capacity) {
         this.arithmetic = arithmetic;
         this.capacity = capacity;
         this.buffer = new NumberGeneric[capacity];

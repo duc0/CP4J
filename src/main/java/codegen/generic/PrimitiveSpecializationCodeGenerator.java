@@ -3,14 +3,13 @@ package codegen.generic;
 import com.vb.io.FastWriter;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PrimitiveSpecializationGenerator {
+public class PrimitiveSpecializationCodeGenerator {
     private void getAllGenericClassFiles(File folder, List<File> classFiles) {
         File[] fileList = folder.listFiles();
         if (fileList != null) {
@@ -40,18 +39,20 @@ public class PrimitiveSpecializationGenerator {
             String originalCode = Files.readString(clz.toPath());
             for (String type : new String[] {"Int", "Long", "Double"}) {
                 String code = originalCode;
-                code.replace("NumberGeneric", type.toLowerCase());
-                code.replace("Generic", type);
+                code = code.replace("import com.vb.number.NumberGeneric;", "");
+                code = code.replace("NumberGeneric", type.toLowerCase());
+                code = code.replace("Generic", type);
                 File newFile = new File(clz.getAbsolutePath().replace("Generic", type));
                 FastWriter fastWriter = new FastWriter(new FileOutputStream(newFile));
                 fastWriter.write(code);
+                fastWriter.flush();
             }
 
         }
     }
 
     public static void main(String[] args) throws IOException {
-        PrimitiveSpecializationGenerator generator = new PrimitiveSpecializationGenerator();
+        PrimitiveSpecializationCodeGenerator generator = new PrimitiveSpecializationCodeGenerator();
         generator.generate();
     }
 }

@@ -3,13 +3,13 @@ package com.vb.graph;
 import com.vb.algorithm.Algorithm;
 import com.vb.datastructure.DisjointSet;
 import com.vb.number.NumberGeneric;
-import com.vb.number.Arithmetic;
+import com.vb.number.GenericArithmetic;
 
 public class GenericKruskalAlgorithm
         implements Algorithm<GenericKruskalAlgorithm.Input, GenericKruskalAlgorithm.Output> {
-    private final Arithmetic arithmetic;
+    private final GenericArithmetic arithmetic;
 
-    public GenericKruskalAlgorithm(Arithmetic arithmetic) {
+    public GenericKruskalAlgorithm(GenericArithmetic arithmetic) {
         this.arithmetic = arithmetic;
     }
 
@@ -37,9 +37,9 @@ public class GenericKruskalAlgorithm
 
     public static final class Input {
         final Graph graph;
-        final GraphWeight weight;
+        final GenericGraphWeight weight;
 
-        public Input(Graph graph, GraphWeight weight) {
+        public Input(Graph graph, GenericGraphWeight weight) {
             this.graph = graph;
             this.weight = weight;
         }

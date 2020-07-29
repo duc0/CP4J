@@ -6,13 +6,13 @@ import com.vb.nd.GenericNDArray;
 import com.vb.nd.NDShape;
 import com.vb.nd.NDSliceRanges;
 import com.vb.number.NumberGeneric;
-import com.vb.number.Arithmetic;
+import com.vb.number.GenericArithmetic;
 
 public class GenericHamiltonPathFinder
         implements Algorithm<GenericHamiltonPathFinder.Input, GenericHamiltonPathFinder.Output> {
-    private final Arithmetic arithmetic;
+    private final GenericArithmetic arithmetic;
 
-    public GenericHamiltonPathFinder(Arithmetic arithmetic) {
+    public GenericHamiltonPathFinder(GenericArithmetic arithmetic) {
         this.arithmetic = arithmetic;
     }
 
@@ -42,7 +42,7 @@ public class GenericHamiltonPathFinder
                         if (!SmallBitSet.contains(set, next) && input.graph.hasEdge(end, next)) {
                             int nextSet = SmallBitSet.union(set, next);
                             NumberGeneric current = best.get(end, set);
-                            if (arithmetic.isEqual(current, arithmetic.maxValue())) {
+                            if (!arithmetic.isEqual(current, arithmetic.maxValue())) {
                                 NumberGeneric weight = input.weight.getWeight(end, next);
                                 NumberGeneric nextBest = best.get(next, nextSet);
                                 best.set(next, nextSet,
@@ -59,9 +59,9 @@ public class GenericHamiltonPathFinder
 
     public static final class Input {
         final Graph graph;
-        final GraphWeight weight;
+        final GenericGraphWeight weight;
 
-        public Input(Graph graph, GraphWeight weight) {
+        public Input(Graph graph, GenericGraphWeight weight) {
             this.graph = graph;
             this.weight = weight;
         }
