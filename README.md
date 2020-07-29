@@ -103,9 +103,9 @@ Algorithms
 [MIT License](https://opensource.org/licenses/MIT)
 
 ## Installation
-You can clone this repository and use it in programming contests. It should work well with IntelliJ+CHelper plugin.
+For using this library in programming contests such as CodeForces, please clone the repository from Github. It should work well with IntelliJ+CHelper plugin.
 
-If you want to use the library directly in your project, you can install it from Github Packages MVN Repo by adding the dependency into your project's Maven pom.xml. You'll also need to config the repo and Github authentication according
+For using the library directly in projects, please install it from Github Packages MVN Repo by adding the dependency into the project's Maven pom.xml. Please also config the repo and Github authentication according
 to [instructions](https://docs.github.com/pt/packages/using-github-packages-with-your-projects-ecosystem/configuring-apache-maven-for-use-with-github-packages).
 
 
