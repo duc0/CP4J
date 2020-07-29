@@ -1,2 +1,2 @@
-44 src/main/java/com/vb/main/VNOI_CF_QBMST.json
+44 src/tasks/com/vb/tasks/VNOI_CF_NKMOBILE.json
 0

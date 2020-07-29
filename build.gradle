@@ -17,7 +17,7 @@ dependencies {
 
 sourceSets {
     main {
-        java.srcDirs += "src/generated"
+        java.srcDirs += "src/generated/java"
         java.srcDirs += "src/tasks"
     }
 }
