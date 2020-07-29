@@ -1,4 +1,4 @@
-package com.vb.main;
+package com.vb.tasks;
 
 import com.vb.algorithm.AlgorithmRunner;
 import com.vb.graph.ConnectedComponentsDetector;
@@ -11,10 +11,12 @@ import com.vb.nd.IntNDArray;
 import com.vb.number.DefaultIntArithmetic;
 import com.vb.number.IntArithmetic;
 import com.vb.search.BinarySearch;
+import com.vb.task.CPTaskSolver;
 
 import java.io.IOException;
 
-public class VNOI_CF_NKCITY {
+public class VNOI_CF_NKCITY implements CPTaskSolver {
+    @Override
     public void solve(int testNumber, FastScanner in, FastWriter out) throws IOException {
         IntNDArray size = in.nextLineAsIntArray();
         int n = size.get(0);

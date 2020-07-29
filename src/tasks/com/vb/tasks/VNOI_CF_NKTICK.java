@@ -1,4 +1,4 @@
-package com.vb.main;
+package com.vb.tasks;
 
 import com.vb.io.FastScanner;
 import com.vb.io.FastWriter;

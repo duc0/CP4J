@@ -1,14 +1,15 @@
-package com.vb.main;
+package com.vb.tasks;
 
 import com.vb.io.FastScanner;
 import com.vb.io.FastWriter;
 import com.vb.nd.IntNDArray;
 import com.vb.nd.NDShape;
 import com.vb.number.DefaultIntArithmetic;
+import com.vb.task.CPTaskSolver;
 
 import java.io.IOException;
 
-public class VNOI_CF_NKPALIN {
+public class VNOI_CF_NKPALIN implements CPTaskSolver {
 
     String trace(String s, IntNDArray f, int l, int left) {
         if (l <= 0) {
@@ -27,6 +28,7 @@ public class VNOI_CF_NKPALIN {
         }
     }
 
+    @Override
     public void solve(int testNumber, FastScanner in, FastWriter out) throws IOException {
         String s = in.nextLineAsString();
         int n = s.length();

@@ -18,7 +18,7 @@
   "location" : "src/main/java/com/vb/main",
   "vmArgs" : "-Xmx256m -Xss64m",
   "mainClass" : "Main",
-  "taskClass" : "com.vb.tasks.VNOI_CF_NKTICK",
+  "taskClass" : "com.vb.main.VNOI_CF_NKTICK",
   "checkerClass" : "net.egork.chelper.checkers.TokenChecker",
   "checkerParameters" : "",
   "testClasses" : [ ],

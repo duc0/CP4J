@@ -1,5 +1,5 @@
 {
-  "name" : "VNOI_CF_NKTICK",
+  "name" : "VNOI_CF_NKPALIN",
   "testType" : "SINGLE",
   "input" : {
     "type" : "STANDARD",
@@ -10,19 +10,19 @@
     "fileName" : "output.txt"
   },
   "tests" : [ {
-    "input" : "5 \n2 5 7 8 4\n4 9 10 10",
-    "output" : "18",
+    "input" : "lmevxeyzl",
+    "output" : "level",
     "index" : 0,
     "active" : true
   } ],
   "location" : "src/main/java/com/vb/main",
   "vmArgs" : "-Xmx256m -Xss64m",
   "mainClass" : "Main",
-  "taskClass" : "com.vb.tasks.VNOI_CF_NKTICK",
+  "taskClass" : "com.vb.main.VNOI_CF_NKPALIN",
   "checkerClass" : "net.egork.chelper.checkers.TokenChecker",
   "checkerParameters" : "",
   "testClasses" : [ ],
-  "date" : "2020.07.22",
+  "date" : "2020.07.23",
   "contestName" : "VNOI_CF",
   "truncate" : true,
   "inputClass" : "com.vb.io.FastScanner",
