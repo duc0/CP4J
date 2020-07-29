@@ -104,4 +104,10 @@ public class IntNDArray {
                 ", shape=" + shape +
                 '}';
     }
+
+    public void add(int i0, int i1, int value) {
+        assert (shape.rank() == 2);
+        int idx = shape.d2(i0, i1);
+        buffer[idx] = arithmetic.add(buffer[idx], value);
+    }
 }

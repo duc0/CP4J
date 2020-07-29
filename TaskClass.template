@@ -2,6 +2,7 @@ package %package%;
 
 import %InputClassFQN%;
 import %OutputClassFQN%;
+import com.vb.task.CPTaskSolver;
 
 import java.io.IOException;
 

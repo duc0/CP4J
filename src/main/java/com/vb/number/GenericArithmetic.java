@@ -5,6 +5,12 @@ public interface GenericArithmetic {
 
     NumberGeneric add(NumberGeneric n1, NumberGeneric n2);
 
+    NumberGeneric subtract(NumberGeneric n1, NumberGeneric n2);
+
+    NumberGeneric multiply(NumberGeneric n1, NumberGeneric n2);
+
+    NumberGeneric divide(NumberGeneric n1, NumberGeneric n2);
+
     NumberGeneric zero();
 
     NumberGeneric maxValue();

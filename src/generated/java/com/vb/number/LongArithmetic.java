@@ -5,6 +5,12 @@ public interface LongArithmetic {
 
     long add(long n1, long n2);
 
+    long subtract(long n1, long n2);
+
+    long multiply(long n1, long n2);
+
+    long divide(long n1, long n2);
+
     long zero();
 
     long maxValue();
