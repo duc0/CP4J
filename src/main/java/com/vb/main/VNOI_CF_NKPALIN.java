@@ -7,6 +7,7 @@ import com.vb.nd.NDShape;
 import java.io.IOException;
 
 public class VNOI_CF_NKPALIN {
+    /*
     String trace(String s, IntNDArray f, int l, int left) {
         if (l <= 0) {
             return "";
@@ -22,10 +23,10 @@ public class VNOI_CF_NKPALIN {
         } else {
             return trace(s, f, l - 1, left + 1);
         }
-    }
+    }*/
 
     public void solve(int testNumber, FastScanner in, FastWriter out) throws IOException {
-        String s = in.nextLineAsString();
+       /* String s = in.nextLineAsString();
         int n = s.length();
         IntNDArray f = new IntNDArray((n + 1) * n);
         f.reshape(new NDShape(n + 1, n));
@@ -50,6 +51,6 @@ public class VNOI_CF_NKPALIN {
             }
         }
         String result = trace(s, f, n, 0);
-        out.write(result);
+        out.write(result);*/
     }
 }

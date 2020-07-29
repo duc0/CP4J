@@ -57,7 +57,7 @@ public class FastScanner {
         return new NDShape(dims);
     }
 
-    public IntNDArray nextLineAsIntArray() throws IOException {
+/*    public IntNDArray nextLineAsIntArray() throws IOException {
         String[] tokens = readTokens();
         IntNDArray result = new IntNDArray(tokens.length);
         for (int i = 0; i < tokens.length; i++) {
@@ -77,5 +77,5 @@ public class FastScanner {
             }
         }
         return result;
-    }
+    }*/
 }

@@ -1,7 +1,7 @@
 package com.vb.graph;
 
-import com.vb.nd.NDArray;
-import com.vb.number.GenericNumber;
+import com.vb.nd.GenericNDArray;
+import com.vb.number.NumberGeneric;
 import com.vb.number.Arithmetic;
 
 import java.util.Arrays;
@@ -9,19 +9,19 @@ import java.util.Arrays;
 public final class GraphWeight {
     private final Arithmetic arithmetic;
     private final Graph graph;
-    private final NDArray weight;
+    private final GenericNDArray weight;
 
     public GraphWeight(Arithmetic arithmetic, Graph graph) {
         this.arithmetic = arithmetic;
         this.graph = graph;
-        this.weight = new NDArray(arithmetic, graph.edgesCapacity());
+        this.weight = new GenericNDArray(arithmetic, graph.edgesCapacity());
     }
 
-    public void setWeight(int u, int v, GenericNumber w) {
+    public void setWeight(int u, int v, NumberGeneric w) {
         weight.set(graph.getEdgeIndex(u, v), w);
     }
 
-    public GenericNumber getWeight(int u, int v) {
+    public NumberGeneric getWeight(int u, int v) {
         return weight.get(graph.getEdgeIndex(u, v));
     }
 
@@ -38,7 +38,7 @@ public final class GraphWeight {
         return result;
     }
 
-    public GenericNumber getWeight(int edgeId) {
+    public NumberGeneric getWeight(int edgeId) {
         return weight.get(edgeId);
     }
 }

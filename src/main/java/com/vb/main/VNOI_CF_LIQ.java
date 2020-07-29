@@ -5,7 +5,7 @@ import java.util.Scanner;
 
 public class VNOI_CF_LIQ {
     public void solve(int testNumber, Scanner in, PrintWriter out) {
-        int len = in.nextInt();
+        /*int len = in.nextInt();
         int[] inp = new int[len];
         for (int idx = 0; idx < len; idx++) {
             inp[idx] = in.nextInt();
@@ -19,6 +19,6 @@ public class VNOI_CF_LIQ {
                 }
             }
         }
-        out.print(f.max());
+        out.print(f.max());*/
     }
 }

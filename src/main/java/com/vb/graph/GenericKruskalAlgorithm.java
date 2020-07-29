@@ -2,14 +2,14 @@ package com.vb.graph;
 
 import com.vb.algorithm.Algorithm;
 import com.vb.datastructure.DisjointSet;
-import com.vb.number.GenericNumber;
+import com.vb.number.NumberGeneric;
 import com.vb.number.Arithmetic;
 
-public class KruskalAlgorithm
-        implements Algorithm<KruskalAlgorithm.Input, KruskalAlgorithm.Output> {
+public class GenericKruskalAlgorithm
+        implements Algorithm<GenericKruskalAlgorithm.Input, GenericKruskalAlgorithm.Output> {
     private final Arithmetic arithmetic;
 
-    public KruskalAlgorithm(Arithmetic arithmetic) {
+    public GenericKruskalAlgorithm(Arithmetic arithmetic) {
         this.arithmetic = arithmetic;
     }
 
@@ -46,8 +46,8 @@ public class KruskalAlgorithm
     }
 
     public static final class Output {
-        private GenericNumber minimumWeight;
-        public GenericNumber getMinimumWeight() {
+        private NumberGeneric minimumWeight;
+        public NumberGeneric getMinimumWeight() {
             return minimumWeight;
         }
     }

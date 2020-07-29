@@ -9,7 +9,7 @@ import java.io.IOException;
 
 public class VNOI_CF_QBMAX {
     public void solve(int testNumber, FastScanner in, FastWriter out) throws IOException {
-        NDShape size = in.nextLineAsShape();
+        /*NDShape size = in.nextLineAsShape();
         IntNDArray matrix = in.nextLinesAs2DIntArray(size);
 
         for (int col = 1; col < size.dim(1); col++) {
@@ -26,6 +26,6 @@ public class VNOI_CF_QBMAX {
             }
         }
 
-        out.write(matrix.max(NDSliceRanges.col2D(-1)));
+        out.write(matrix.max(NDSliceRanges.col2D(-1)));*/
     }
 }

@@ -10,7 +10,7 @@ import java.io.IOException;
 
 public class VNOI_CF_NKCITY {
     public void solve(int testNumber, FastScanner in, FastWriter out) throws IOException {
-        IntNDArray size = in.nextLineAsIntArray();
+        /*IntNDArray size = in.nextLineAsIntArray();
         int n = size.get(0);
         int m = size.get(1);
         Graph graph = new GraphAdjList(n, m * 2, true);
@@ -30,6 +30,6 @@ public class VNOI_CF_NKCITY {
 
         ConnectedComponentsDetector cc = new ConnectedComponentsDetector();
         out.write(BinarySearch.findMinSatisfy(minWeight, maxWeight, w ->
-                AlgorithmRunner.runAlgorithm(cc, new ConnectedComponentsDetector.Input(graph, (u, v) -> cost.getWeight(u, v) <= w)).getResult().isConnected()));
+                AlgorithmRunner.runAlgorithm(cc, new ConnectedComponentsDetector.Input(graph, (u, v) -> cost.getWeight(u, v) <= w)).getResult().isConnected()));*/
     }
 }
