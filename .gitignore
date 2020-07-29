@@ -4,6 +4,7 @@
 .gradle
 gradle.properties
 output/Main.java
+target
 
 # User-specific stuff
 .idea/**/workspace.xml

@@ -17,6 +17,14 @@ repositories {
         }
         url = "https://maven.pkg.jetbrains.space/vibrain/p/cp4j/vibrain-maven"
     }
+    maven {
+        name = "GitHubPackages"
+        url = uri("https://maven.pkg.github.com/duc0/CP4J")
+        credentials {
+            username = project.findProperty("gpr.user") ?: System.getenv("USERNAME")
+            password = project.findProperty("gpr.key") ?: System.getenv("TOKEN")
+        }
+    }
 }
 
 dependencies {
@@ -33,6 +41,9 @@ sourceSets {
 
 publishing {
     publications {
+        gpr(MavenPublication) {
+            from(components.java)
+        }
         maven(MavenPublication) {
             groupId = 'com.vb.cp4j'
             artifactId = 'cp4j'
