@@ -2,12 +2,14 @@ package com.vb.main;
 
 import com.vb.io.FastScanner;
 import com.vb.io.FastWriter;
+import com.vb.nd.IntNDArray;
 import com.vb.nd.NDShape;
+import com.vb.number.DefaultIntArithmetic;
 
 import java.io.IOException;
 
 public class VNOI_CF_NKPALIN {
-    /*
+
     String trace(String s, IntNDArray f, int l, int left) {
         if (l <= 0) {
             return "";
@@ -23,12 +25,12 @@ public class VNOI_CF_NKPALIN {
         } else {
             return trace(s, f, l - 1, left + 1);
         }
-    }*/
+    }
 
     public void solve(int testNumber, FastScanner in, FastWriter out) throws IOException {
-       /* String s = in.nextLineAsString();
+        String s = in.nextLineAsString();
         int n = s.length();
-        IntNDArray f = new IntNDArray((n + 1) * n);
+        IntNDArray f = new IntNDArray(new DefaultIntArithmetic(), (n + 1) * n);
         f.reshape(new NDShape(n + 1, n));
         for (int l = 1; l <= n; l++) {
             for (int left = 0; left + l - 1 < n; left++) {
@@ -51,6 +53,7 @@ public class VNOI_CF_NKPALIN {
             }
         }
         String result = trace(s, f, n, 0);
-        out.write(result);*/
+        out.write(result);
+        out.flush();
     }
 }

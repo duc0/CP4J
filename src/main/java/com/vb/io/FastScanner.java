@@ -1,5 +1,6 @@
 package com.vb.io;
 
+import com.vb.nd.IntNDArray;
 import com.vb.nd.NDShape;
 
 import java.io.BufferedReader;
@@ -57,9 +58,9 @@ public class FastScanner {
         return new NDShape(dims);
     }
 
-/*    public IntNDArray nextLineAsIntArray() throws IOException {
+    public IntNDArray nextLineAsIntArray() throws IOException {
         String[] tokens = readTokens();
-        IntNDArray result = new IntNDArray(tokens.length);
+        IntNDArray result = new IntNDArray(null, tokens.length);
         for (int i = 0; i < tokens.length; i++) {
             result.set(i, Integer.parseInt(tokens[i]));
         }
@@ -68,7 +69,7 @@ public class FastScanner {
 
     public IntNDArray nextLinesAs2DIntArray(NDShape shape) throws IOException {
         assert(shape.rank() == 2);
-        IntNDArray result = new IntNDArray((int) shape.size());
+        IntNDArray result = new IntNDArray(null, (int) shape.size());
         result.reshape(shape);
         for (int row = 0; row < shape.dim(0); row++) {
             int[] tokens = readTokensAsIntArray(shape.dim(1));
@@ -77,5 +78,5 @@ public class FastScanner {
             }
         }
         return result;
-    }*/
+    }
 }

@@ -1,6 +1,6 @@
 package com.vb.kotlin.datastructure
 
-class DisjointSet {
+class KotlinDisjointSet {
     private val size: Int
     private var parent: IntArray
 

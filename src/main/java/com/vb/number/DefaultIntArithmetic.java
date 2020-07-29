@@ -1,6 +1,6 @@
 package com.vb.number;
 
-public class DefaultIntArithmetic implements IntArithmetic {
+public class DefaultIntArithmetic implements com.vb.number.IntArithmetic {
     @Override
     public int compare(int n1, int n2) {
         return Integer.compare(n1, n2);

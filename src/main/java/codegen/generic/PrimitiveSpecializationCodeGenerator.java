@@ -42,7 +42,8 @@ public class PrimitiveSpecializationCodeGenerator {
                 code = code.replace("import com.vb.number.NumberGeneric;", "");
                 code = code.replace("NumberGeneric", type.toLowerCase());
                 code = code.replace("Generic", type);
-                File newFile = new File(clz.getAbsolutePath().replace("Generic", type));
+                File newFile = new File(clz.getAbsolutePath().replace("Generic", type).replace("src\\main", "src\\generated"));
+                newFile.getParentFile().mkdirs();
                 FastWriter fastWriter = new FastWriter(new FileOutputStream(newFile));
                 fastWriter.write(code);
                 fastWriter.flush();

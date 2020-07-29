@@ -1,20 +1,20 @@
 package com.vb.nd;
 
-import com.vb.number.NumberGeneric;
-import com.vb.number.GenericArithmetic;
+
+import com.vb.number.DoubleArithmetic;
 
 import java.util.Arrays;
 
-public class GenericNDArray {
-    private final GenericArithmetic arithmetic;
+public class DoubleNDArray {
+    private final DoubleArithmetic arithmetic;
     private final int capacity;
-    protected final NumberGeneric[] buffer;
+    protected final double[] buffer;
     protected NDShape shape;
 
-    public GenericNDArray(GenericArithmetic arithmetic, int capacity) {
+    public DoubleNDArray(DoubleArithmetic arithmetic, int capacity) {
         this.arithmetic = arithmetic;
         this.capacity = capacity;
-        this.buffer = new NumberGeneric[capacity];
+        this.buffer = new double[capacity];
         this.shape = new NDShape(capacity);
     }
 
@@ -25,19 +25,19 @@ public class GenericNDArray {
         this.shape = shape;
     }
 
-    public NumberGeneric get(int i0) {
+    public double get(int i0) {
         assert (shape.rank() == 1);
         return buffer[i0];
     }
 
-    public NumberGeneric get(int i0, int i1) {
+    public double get(int i0, int i1) {
         assert (shape.rank() == 2);
         assert (0 <= i0 && i0 < shape.dim(0)) : "i0 = " + i0;
         assert (0 <= i1 && i1 < shape.dim(1)) : "i1 = " + i1;
         return buffer[shape.d2(i0, i1)];
     }
 
-    NumberGeneric get(NDIndex index) {
+    double get(NDIndex index) {
         if (index.rank() == 1) {
             return get(index.index(0));
         } else if (index.rank() == 2) {
@@ -47,25 +47,25 @@ public class GenericNDArray {
         }
     }
 
-    public void set(int i0, NumberGeneric val) {
+    public void set(int i0, double val) {
         assert (shape.rank() == 1);
         buffer[i0] = val;
     }
 
-    public void set(int i0, int i1, NumberGeneric val) {
+    public void set(int i0, int i1, double val) {
         assert (shape.rank() == 2);
         buffer[shape.d2(i0, i1)] = val;
     }
 
-    public NumberGeneric max() {
+    public double max() {
         return max(NDSliceRanges.all(shape.rank()));
     }
 
-    public NumberGeneric max(NDSliceRanges ndSliceRanges) {
+    public double max(NDSliceRanges ndSliceRanges) {
         NDIndex index = NDIndex.startIndex(shape, ndSliceRanges);
-        NumberGeneric result = get(index);
+        double result = get(index);
         do {
-            NumberGeneric value = get(index);
+            double value = get(index);
             if (arithmetic.compare(value, result) > 0) {
                 result = value;
             }
@@ -73,15 +73,15 @@ public class GenericNDArray {
         return result;
     }
 
-    public NumberGeneric min() {
+    public double min() {
         return min(NDSliceRanges.all(shape.rank()));
     }
 
-    public NumberGeneric min(NDSliceRanges ndSliceRanges) {
+    public double min(NDSliceRanges ndSliceRanges) {
         NDIndex index = NDIndex.startIndex(shape, ndSliceRanges);
-        NumberGeneric result = get(index);
+        double result = get(index);
         do {
-            NumberGeneric value = get(index);
+            double value = get(index);
             if (arithmetic.compare(value, result) < 0) {
                 result = value;
             }
@@ -89,7 +89,7 @@ public class GenericNDArray {
         return result;
     }
 
-    public void setIfMore(int i0, NumberGeneric val) {
+    public void setIfMore(int i0, double val) {
         assert (shape.rank() == 1);
         if (arithmetic.compare(val, buffer[i0]) > 0) {
             buffer[i0] = val;

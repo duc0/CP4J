@@ -1,6 +1,6 @@
 package com.vb.main;
 
-import com.vb.kotlin.datastructure.DisjointSet;
+import com.vb.datastructure.DisjointSet;
 import com.vb.io.FastScanner;
 import com.vb.io.FastWriter;
 
