@@ -73,6 +73,14 @@ Dynamic Programming to find a path with maximum sum from left column to right co
         }        
 ```
 
+Minimum Spanning Tree (Kruskal Algorithm)
+```java
+        IntKruskalAlgorithm kruskal = new IntKruskalAlgorithm(arithmetic);
+        IntKruskalAlgorithm.Input input = new IntKruskalAlgorithm.Input(g, weight);
+        out.write(AlgorithmRunner.runAlgorithm(kruskal, input).getResult().getMinimumWeight());
+        out.flush();
+```
+
 ## To be supported
 Data Structures
 * Segment Tree
