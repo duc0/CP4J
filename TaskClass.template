@@ -6,6 +6,7 @@ import com.vb.task.CPTaskSolver;
 
 import java.io.IOException;
 
+// Powered by CP4J - https://github.com/duc0/CP4J
 public class %TaskClass% implements CPTaskSolver {
     @Override
     public void solve(int testNumber, %InputClass% in, %OutputClass% out) throws IOException {
