@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) CP4J Project
+ */
+
 package com.vb.io;
 
 import com.vb.nd.IntNDArray;

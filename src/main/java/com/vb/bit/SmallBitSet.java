@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) CP4J Project
+ */
+
 package com.vb.bit;
 
 import java.util.BitSet;

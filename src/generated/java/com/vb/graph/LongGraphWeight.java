@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) CP4J Project
+ */
+
 package com.vb.graph;
 
 import com.vb.nd.LongNDArray;

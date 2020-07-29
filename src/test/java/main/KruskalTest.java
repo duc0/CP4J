@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) CP4J Project
+ */
+
 package main;
 
 import com.vb.tasks.VNOI_CF_QBMST;

@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) CP4J Project
+ */
+
 plugins {
     id 'java'
     id 'maven-publish'

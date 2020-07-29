@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) CP4J Project
+ */
+
 package com.vb.datastructure;
 
 import com.vb.nd.LongNDArray;

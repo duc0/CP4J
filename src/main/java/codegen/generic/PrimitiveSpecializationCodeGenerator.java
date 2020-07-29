@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) CP4J Project
+ */
+
 package codegen.generic;
 
 import com.vb.io.FastWriter;

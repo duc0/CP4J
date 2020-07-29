@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) CP4J Project
+ */
+
 package com.vb.number;
 
 public class DefaultIntArithmetic implements com.vb.number.IntArithmetic {
