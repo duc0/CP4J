@@ -1,6 +1,6 @@
 package com.vb.number;
 
-public interface Arithmetic {
+public interface GenericArithmetic {
     int compare(NumberGeneric n1, NumberGeneric n2);
 
     NumberGeneric add(NumberGeneric n1, NumberGeneric n2);
