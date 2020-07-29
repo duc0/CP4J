@@ -1,13 +1,22 @@
 plugins {
     id 'java'
+    id 'maven-publish'
 }
 
-group 'org.example'
-version '1.0-SNAPSHOT'
+apply plugin: 'maven-publish'
+
+group 'com.vb.cp4j'
+version '0.1'
 
 repositories {
     mavenCentral()
-    maven { url 'https://dl.bintray.com/kotlin/kotlin-eap' }
+    maven {
+        credentials {
+            username = "$space_usr"
+            password = "$space_pwd"
+        }
+        url = "https://maven.pkg.jetbrains.space/vibrain/p/cp4j/vibrain-maven"
+    }
 }
 
 dependencies {
@@ -22,3 +31,18 @@ sourceSets {
     }
 }
 
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = 'com.vb.cp4j'
+            artifactId = 'cp4j'
+            version = "0.1"
+            from components.java
+
+            pom {
+                name = 'CP4J'
+                description = 'A high performant, modularized data structures and algorithm Java library for programming contests.'
+            }
+        }
+    }
+}
