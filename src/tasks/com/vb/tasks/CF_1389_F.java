@@ -8,6 +8,7 @@ import com.vb.bit.SmallBitSet;
 import com.vb.datastructure.SegmentArray;
 import com.vb.io.FastScanner;
 import com.vb.io.FastWriter;
+import com.vb.logging.Log;
 import com.vb.task.CPTaskSolver;
 
 import java.io.IOException;
@@ -22,7 +23,8 @@ public class CF_1389_F implements CPTaskSolver {
         for (int s = 0; s <= fullSet; s++) {
             int size = 0;
             boolean bad = false;
-            outer: for (int i = 0; i < n; i++) {
+            outer:
+            for (int i = 0; i < n; i++) {
                 if (SmallBitSet.contains(s, i)) {
                     size++;
                     for (int j = i + 1; j < n; j++) {
@@ -43,6 +45,7 @@ public class CF_1389_F implements CPTaskSolver {
     }
 
     public static int solve(int testNumber, SegmentArray segmentArray, int[] color) {
+        //Log.setDebug(true);
         int n = segmentArray.getSize();
         int[] sorted = segmentArray.sortByLeft();
         int[] f = new int[n];
@@ -53,13 +56,10 @@ public class CF_1389_F implements CPTaskSolver {
         for (int i = 0; i < n; i++) {
             int curLeft = segmentArray.getLeft(sorted[i]);
             int curRight = segmentArray.getRight(sorted[i]);
-            System.out.println(curLeft + ", " + curRight + ", " + color[sorted[i]]);
+            Log.d("Segment: {0}, {1}, Color = {2}", curLeft, curRight, color[sorted[i]]);
             for (int j = i + 1; j < n; j++) {
                 if (color[sorted[j]] == color[sorted[i]]) {
                     if (segmentArray.getRight(sorted[j]) <= curRight) {
-                        if (testNumber == 16 && i == 4) {
-                            System.out.println("here");
-                        }
                         f[i] += 1;
                     }
                 }
@@ -76,7 +76,7 @@ public class CF_1389_F implements CPTaskSolver {
                 }
             }
             result = Math.max(result, f[i]);
-            System.out.println(Arrays.toString(f));
+            Log.d(Arrays.toString(f));
         }
         return result;
     }

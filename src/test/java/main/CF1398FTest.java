@@ -5,6 +5,7 @@
 package main;
 
 import com.vb.datastructure.SegmentArray;
+import com.vb.logging.Log;
 import com.vb.tasks.CF_1389_F;
 import org.junit.Test;
 
@@ -28,7 +29,7 @@ public class CF1398FTest {
                 segmentArray.setSegment(i, left, left + len - 1);
                 color[i] = c;
             }
-            System.out.println("Test: " + test + " array=" + segmentArray + ", color=" + Arrays.toString(color));
+            Log.d("Test: {0} array={1} color={2}",test , segmentArray, Arrays.toString(color));
             assertEquals(CF_1389_F.solve(test, segmentArray, color), CF_1389_F.solveBruteForce(test, segmentArray, color));
         }
     }

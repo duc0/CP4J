@@ -5,6 +5,7 @@
 package codegen.generic;
 
 import com.vb.io.FastWriter;
+import com.vb.logging.Log;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -38,7 +39,7 @@ public class PrimitiveSpecializationCodeGenerator {
 
     public void generate() throws IOException {
         List<File> classes = getAllGenericClassFiles();
-        System.out.println(classes);
+        Log.d(classes.toString());
         for (File clz : classes) {
             String originalCode = Files.readString(clz.toPath());
             for (String type : new String[] {"Int", "Long", "Double"}) {
