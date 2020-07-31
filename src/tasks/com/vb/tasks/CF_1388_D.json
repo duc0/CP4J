@@ -1,0 +1,44 @@
+{
+  "name" : "CF_1388_D",
+  "testType" : "SINGLE",
+  "input" : {
+    "type" : "STANDARD",
+    "fileName" : "input.txt"
+  },
+  "output" : {
+    "type" : "STANDARD",
+    "fileName" : "output.txt"
+  },
+  "tests" : [ {
+    "input" : "3\n1 2 3\n2 3 -1",
+    "output" : "10\n1 2 3",
+    "index" : 0,
+    "active" : true
+  }, {
+    "input" : "2\n-1 100\n2 -1",
+    "output" : "99\n2 1",
+    "index" : 1,
+    "active" : true
+  }, {
+    "input" : "10\n-10 -1 2 2 5 -2 -3 -4 2 -6\n-1 -1 2 2 -1 5 5 7 7 9",
+    "output" : "-9\n3 5 6 1 9 4 10 7 8 2",
+    "index" : 2,
+    "active" : true
+  } ],
+  "location" : "src/tasks/com/vb/tasks",
+  "vmArgs" : "-Xmx256m -Xss64m -ea",
+  "mainClass" : "Main",
+  "taskClass" : "com.vb.tasks.CF_1388_D",
+  "checkerClass" : "net.egork.chelper.checkers.TokenChecker",
+  "checkerParameters" : "",
+  "testClasses" : [ ],
+  "date" : "2020.07.30",
+  "contestName" : "CF_1388",
+  "truncate" : true,
+  "inputClass" : "com.vb.io.FastScanner",
+  "outputClass" : "com.vb.io.FastWriter",
+  "includeLocale" : false,
+  "failOnOverflow" : false,
+  "interactive" : false,
+  "interactor" : "net.egork.chelper.tester.Interactor"
+}
