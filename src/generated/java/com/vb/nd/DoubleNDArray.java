@@ -4,8 +4,9 @@
 
 package com.vb.nd;
 
-
+import com.vb.datastructure.cell2d.Cell2D;
 import com.vb.number.DoubleArithmetic;
+
 
 import java.util.Arrays;
 
@@ -20,6 +21,11 @@ public class DoubleNDArray {
         this.capacity = capacity;
         this.buffer = new double[capacity];
         this.shape = new NDShape(capacity);
+    }
+
+    public DoubleNDArray(DoubleArithmetic arithmetic, NDShape shape) {
+        this(arithmetic, (int) shape.size());
+        reshape(shape);
     }
 
     public void reshape(NDShape shape) {
@@ -41,6 +47,10 @@ public class DoubleNDArray {
         return buffer[shape.d2(i0, i1)];
     }
 
+    public double get(Cell2D cell) {
+        return get(cell.row, cell.col);
+    }
+
     double get(NDIndex index) {
         if (index.rank() == 1) {
             return get(index.index(0));
@@ -59,6 +69,10 @@ public class DoubleNDArray {
     public void set(int i0, int i1, double val) {
         assert (shape.rank() == 2);
         buffer[shape.d2(i0, i1)] = val;
+    }
+
+    public void set(Cell2D cell, double val) {
+        set(cell.row, cell.col, val);
     }
 
     public double max() {

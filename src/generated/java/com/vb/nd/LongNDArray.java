@@ -4,8 +4,9 @@
 
 package com.vb.nd;
 
-
+import com.vb.datastructure.cell2d.Cell2D;
 import com.vb.number.LongArithmetic;
+
 
 import java.util.Arrays;
 
@@ -20,6 +21,11 @@ public class LongNDArray {
         this.capacity = capacity;
         this.buffer = new long[capacity];
         this.shape = new NDShape(capacity);
+    }
+
+    public LongNDArray(LongArithmetic arithmetic, NDShape shape) {
+        this(arithmetic, (int) shape.size());
+        reshape(shape);
     }
 
     public void reshape(NDShape shape) {
@@ -41,6 +47,10 @@ public class LongNDArray {
         return buffer[shape.d2(i0, i1)];
     }
 
+    public long get(Cell2D cell) {
+        return get(cell.row, cell.col);
+    }
+
     long get(NDIndex index) {
         if (index.rank() == 1) {
             return get(index.index(0));
@@ -59,6 +69,10 @@ public class LongNDArray {
     public void set(int i0, int i1, long val) {
         assert (shape.rank() == 2);
         buffer[shape.d2(i0, i1)] = val;
+    }
+
+    public void set(Cell2D cell, long val) {
+        set(cell.row, cell.col, val);
     }
 
     public long max() {
