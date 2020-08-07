@@ -1,0 +1,9 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="CF1393_D" type="Task" factoryName="Task">
+    <taskConf>src/tasks/com/vb/tasks/CF1393_D.json</taskConf>
+    <method v="2">
+      <option name="MakeProject" enabled="false" />
+      <option name="MakeProject" enabled="false" />
+    </method>
+  </configuration>
+</component>
