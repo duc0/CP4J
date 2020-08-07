@@ -1,0 +1,64 @@
+{
+  "name" : "CF1393_D",
+  "testType" : "SINGLE",
+  "input" : {
+    "type" : "STANDARD",
+    "fileName" : "input.txt"
+  },
+  "output" : {
+    "type" : "STANDARD",
+    "fileName" : "output.txt"
+  },
+  "tests" : [ {
+    "input" : "3 3\naaa\naaa\naaa",
+    "output" : "10",
+    "index" : 0,
+    "active" : true
+  }, {
+    "input" : "3 4\nabab\nbaba\nabab",
+    "output" : "12",
+    "index" : 1,
+    "active" : true
+  }, {
+    "input" : "5 5\nzbacg\nbaaac\naaaaa\neaaad\nweadd",
+    "output" : "31",
+    "index" : 2,
+    "active" : true
+  }, {
+    "input" : "5 6\naaaaaa\naaaaaa\naaaaaa\naaaaaa\naaaaaa",
+    "output" : "44",
+    "index" : 3,
+    "active" : true
+  }, {
+    "input" : "5 7\nabaaaac\nabaaaac\nabaaaac\nabaaaac\nabaaaac\n",
+    "output" : "41",
+    "index" : 4,
+    "active" : true
+  }, {
+    "input" : "10 1\na\nb\nc\na\na\na\na\na\na\na",
+    "output" : "10\n",
+    "index" : 5,
+    "active" : true
+  }, {
+    "input" : "5 10\naaaaaaaaaa\naaaaaaaaaa\naaaaaaaaaa\nzzzzzzzzzz\naaaaaaaaaa\n",
+    "output" : "58",
+    "index" : 6,
+    "active" : true
+  } ],
+  "location" : "src/tasks/com/vb/tasks",
+  "vmArgs" : "-Xmx256m -Xss64m",
+  "mainClass" : "Main",
+  "taskClass" : "com.vb.tasks.CF1393_D",
+  "checkerClass" : "net.egork.chelper.checkers.TokenChecker",
+  "checkerParameters" : "",
+  "testClasses" : [ ],
+  "date" : "2020.08.07",
+  "contestName" : "CF1393",
+  "truncate" : true,
+  "inputClass" : "com.vb.io.FastScanner",
+  "outputClass" : "com.vb.io.FastWriter",
+  "includeLocale" : false,
+  "failOnOverflow" : false,
+  "interactive" : false,
+  "interactor" : "net.egork.chelper.tester.Interactor"
+}

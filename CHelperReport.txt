@@ -1,3 +1,2 @@
-37 src/tasks/com/vb/tasks/CF_1388_D.json
-1
-2
+36 src/tasks/com/vb/tasks/CF1393_D.json
+0
