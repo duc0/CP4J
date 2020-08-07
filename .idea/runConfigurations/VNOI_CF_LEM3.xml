@@ -1,0 +1,18 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="VNOI_CF_LEM3" type="Task" factoryName="Task">
+    <taskConf>src/main/java/com/vb/main/VNOI_CF_LEM3.json</taskConf>
+    <method v="2">
+      <option name="MakeProject" enabled="false" />
+      <option name="MakeProject" enabled="false" />
+      <option name="MakeProject" enabled="false" />
+      <option name="MakeProject" enabled="false" />
+      <option name="MakeProject" enabled="false" />
+      <option name="MakeProject" enabled="false" />
+      <option name="MakeProject" enabled="false" />
+      <option name="MakeProject" enabled="false" />
+      <option name="MakeProject" enabled="false" />
+      <option name="MakeProject" enabled="false" />
+      <option name="MakeProject" enabled="false" />
+    </method>
+  </configuration>
+</component>

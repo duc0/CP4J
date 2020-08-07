@@ -1,0 +1,11 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="VNOI_CF_NKMOBILE" type="Task" factoryName="Task">
+    <taskConf>src/tasks/com/vb/tasks/VNOI_CF_NKMOBILE.json</taskConf>
+    <method v="2">
+      <option name="MakeProject" enabled="false" />
+      <option name="MakeProject" enabled="false" />
+      <option name="MakeProject" enabled="false" />
+      <option name="MakeProject" enabled="false" />
+    </method>
+  </configuration>
+</component>
